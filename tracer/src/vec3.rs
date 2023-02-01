@@ -1,6 +1,5 @@
+use std::ops::{Add, Div, Mul, Neg, Sub};
 use std::{cmp, fmt};
-use std::ops::{Sub, Add, Mul, Div, Neg};
-
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -30,7 +29,7 @@ impl Vec3 {
         }
     }
 
-    pub fn length_squared (&self) -> f64 {
+    pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
@@ -99,7 +98,6 @@ impl fmt::Debug for Vec3 {
         write!(f, "({}, {}, {})", self.x, self.y, self.z)
     }
 }
-
 
 impl Add for Vec3 {
     type Output = Self;
@@ -196,4 +194,3 @@ impl Mul<f64> for Vec3 {
         }
     }
 }
-
