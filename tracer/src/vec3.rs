@@ -49,6 +49,11 @@ impl Vec3 {
         }
     }
 
+    pub fn near_zero(&self) -> bool {
+        const S: f64 = 1e-8;
+        self.x.abs() < S && self.y.abs() < S && self.z.abs() < S
+    }
+
     pub fn random() -> Vec3 {
         Vec3 {
             x: rand::random(),
@@ -87,6 +92,18 @@ impl Vec3 {
         Vec3::random_in_unit_sphere().unit()
     }
 
+    pub fn reflect(&self, normal: &Vec3) -> Vec3 {
+        *self - *normal * 2.0 * self.dot(normal)
+    }
+
+    pub fn scale(&self, scalar: f64) -> Vec3 {
+        Vec3 {
+            x: self.x * scalar,
+            y: self.y * scalar,
+            z: self.z * scalar,
+        }
+    }
+
     pub fn sqrt(&self) -> Vec3 {
         Vec3 {
             x: self.x.sqrt(),
@@ -102,14 +119,6 @@ impl Vec3 {
             x: self.x / len,
             y: self.y / len,
             z: self.z / len,
-        }
-    }
-
-    pub fn scale(&self, scalar: f64) -> Vec3 {
-        Vec3 {
-            x: self.x * scalar,
-            y: self.y * scalar,
-            z: self.z * scalar,
         }
     }
 

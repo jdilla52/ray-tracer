@@ -1,28 +1,51 @@
 mod camera;
 mod error;
 mod hittable;
+mod material;
 mod ray;
 mod sphere;
 mod vec3;
 
 use crate::hittable::{Hittable, HittableList};
+use crate::material::lambertian::Lambertian;
+use crate::material::metal::Metal;
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::Vec3;
 use error::TracerResult;
 use std::fs::File;
 use std::io::Write;
+use std::rc::Rc;
 
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 200;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
     let camera = camera::Camera::default();
-    let samples = 100;
-    let max_depth = 50;
+    let samples = 10;
+    let max_depth = 20;
 
     let world = HittableList::new(vec![
-        Box::new(sphere::Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)),
-        Box::new(sphere::Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)),
+        Box::new(sphere::Sphere::new(
+            Vec3::new(0.0, 0.0, -1.0),
+            0.5,
+            Rc::new(Lambertian::new(Vec3::new(0.7, 0.3, 0.3))),
+        )),
+        Box::new(sphere::Sphere::new(
+            Vec3::new(-1.0, 0., -1.0),
+            0.5,
+            Rc::new(Metal::new(Vec3::new(0.8, 0.8, 0.8))),
+        )),
+        Box::new(sphere::Sphere::new(
+            Vec3::new(1.0, 0., -1.0),
+            0.5,
+            Rc::new(Metal::new(Vec3::new(0.8, 0.6, 0.2))),
+        )),
+        Box::new(sphere::Sphere::new(
+            Vec3::new(0.0, -100.5, -1.0),
+            100.0,
+            Rc::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0))),
+        )),
     ]);
 
     // camera
@@ -63,21 +86,25 @@ pub fn hit_sphere(center: Vec3, radius: f64, ray: &Ray) -> Option<f64> {
     }
 }
 
-pub fn ray_color(ray: &ray::Ray, world: &HittableList, depth: i32) -> vec3::Vec3 {
+pub fn ray_color(ray: &ray::Ray, world: &HittableList, depth: i32) -> Vec3 {
     if depth <= 0 {
-        return vec3::Vec3::zero();
+        return Vec3::zero();
     }
 
     if let Some(t) = world.hit(ray, 0.001, f64::INFINITY) {
         let target = t.position + t.normal + Vec3::random_unit_vector();
-        ray_color(&Ray::new(t.position, target - t.position), world, depth - 1) * 0.5
+        return if let Some(r) = t.material.scatter(ray, &t) {
+            r.attenuation * ray_color(&r.scattered, world, depth - 1)
+        } else {
+            Vec3::zero()
+        };
     } else {
         let unit_direction = ray.direction.unit();
         let t = 0.5 * (unit_direction.y + 1.0);
-        vec3::Vec3::one() * (1.0 - t) + vec3::Vec3::new(0.5, 0.7, 1.0) * t
+        Vec3::one() * (1.0 - t) + vec3::Vec3::new(0.5, 0.7, 1.0) * t
     }
 }
 
 fn main() {
-    write_image("./output/gamma_acne.ppm".to_string()).unwrap();
+    write_image("./output/metal.ppm".to_string()).unwrap();
 }

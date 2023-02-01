@@ -1,11 +1,14 @@
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::Vec3;
+use std::rc::Rc;
 
 pub struct HitRecord {
     pub root: f64,
     pub position: Vec3,
     pub normal: Vec3,
     pub front_face: bool,
+    pub material: Rc<dyn Material>,
 }
 
 impl HitRecord {}
