@@ -96,6 +96,13 @@ impl Vec3 {
         *self - *normal * 2.0 * self.dot(normal)
     }
 
+    pub fn refract(&self, normal: &Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = (-*self).dot(normal).min(1.0);
+        let r_out_perp = (*self + *normal * cos_theta) * etai_over_etat;
+        let r_out_parallel = *normal * -(r_out_perp.length_squared() - 1.0).abs().sqrt();
+        r_out_perp + r_out_parallel
+    }
+
     pub fn scale(&self, scalar: f64) -> Vec3 {
         Vec3 {
             x: self.x * scalar,

@@ -1,3 +1,4 @@
+pub mod dieletric;
 pub mod lambertian;
 pub mod metal;
 

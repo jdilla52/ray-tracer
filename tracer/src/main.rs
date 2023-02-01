@@ -7,6 +7,7 @@ mod sphere;
 mod vec3;
 
 use crate::hittable::{Hittable, HittableList};
+use crate::material::dieletric::Dieletric;
 use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
 use crate::material::Material;
@@ -33,8 +34,8 @@ pub fn write_image(path: String) -> TracerResult<()> {
         )),
         Box::new(sphere::Sphere::new(
             Vec3::new(-1.0, 0., -1.0),
-            0.5,
-            Rc::new(Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.2)),
+            -0.5,
+            Rc::new(Dieletric::new(1.5)),
         )),
         Box::new(sphere::Sphere::new(
             Vec3::new(1.0, 0., -1.0),
@@ -106,5 +107,5 @@ pub fn ray_color(ray: &ray::Ray, world: &HittableList, depth: i32) -> Vec3 {
 }
 
 fn main() {
-    write_image("./output/metal.ppm".to_string()).unwrap();
+    write_image("./output/dieletric.ppm".to_string()).unwrap();
 }
