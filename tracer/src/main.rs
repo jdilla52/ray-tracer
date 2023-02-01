@@ -22,12 +22,19 @@ pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 200;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
+    let look_from = Vec3::new(3., 3., 2.);
+    let look_at = Vec3::new(0., 0., -1.);
+    let vup = Vec3::new(0., 1., 0.);
+    let dist_to_focus = (look_from - look_at).len();
+    let aperture = 2.0;
     let camera = camera::Camera::new(
-        Vec3::new(-2., 2., 1.),
-        Vec3::new(0., 0., -1.),
-        Vec3::new(0., 1., 0.),
+        look_from,
+        look_at,
+        vup,
         20.0,
         aspect_ratio,
+        aperture,
+        dist_to_focus,
     );
 
     let samples = 10;
@@ -37,14 +44,24 @@ pub fn write_image(path: String) -> TracerResult<()> {
 
     let world = HittableList::new(vec![
         Box::new(sphere::Sphere::new(
-            Vec3::new(-r, 0.0, -1.0),
-            r,
-            Rc::new(Lambertian::new(Vec3::new(0., 0., 1.))),
+            Vec3::new(0.0, 0.0, -1.0),
+            0.5,
+            Rc::new(Lambertian::new(Vec3::new(0.1, 0.2, 0.3))),
         )),
         Box::new(sphere::Sphere::new(
-            Vec3::new(r, 0., -1.0),
-            r,
-            Rc::new(Lambertian::new(Vec3::new(1.0, 0., 0.))),
+            Vec3::new(-1.0, 0., -1.0),
+            0.5,
+            Rc::new(Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.2)),
+        )),
+        Box::new(sphere::Sphere::new(
+            Vec3::new(1.0, 0., -1.0),
+            0.5,
+            Rc::new(Metal::new(Vec3::new(0.8, 0.6, 0.2), 1.0)),
+        )),
+        Box::new(sphere::Sphere::new(
+            Vec3::new(0.0, -100.5, -1.0),
+            100.0,
+            Rc::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0))),
         )),
     ]);
 
@@ -60,7 +77,7 @@ pub fn write_image(path: String) -> TracerResult<()> {
             for s in 0..samples {
                 let u = (i as f64 + rand::random::<f64>()) / (image_width - 1) as f64;
                 let v = (j as f64 + rand::random::<f64>()) / (image_height - 1) as f64;
-                let ray = camera.as_ray(u, v);
+                let ray = camera.get_ray(u, v);
                 color = color + ray_color(&ray, &world, max_depth);
             }
             writeln!(&mut output, "{}", color.as_aggregated_color(samples))?;
@@ -103,5 +120,5 @@ pub fn ray_color(ray: &ray::Ray, world: &HittableList, depth: i32) -> Vec3 {
 }
 
 fn main() {
-    write_image("./output/dieletric.ppm".to_string()).unwrap();
+    write_image("./output/depth_of_field.ppm".to_string()).unwrap();
 }

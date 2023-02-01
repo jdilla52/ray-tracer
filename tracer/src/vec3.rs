@@ -88,6 +88,19 @@ impl Vec3 {
         }
     }
 
+    pub fn random_in_unit_disk() -> Vec3 {
+        loop {
+            let p = Vec3::new(
+                rand::random::<f64>() * 2. - 1.,
+                rand::random::<f64>() * 2. - 1.,
+                0.0,
+            );
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
     pub fn random_unit_vector() -> Vec3 {
         Vec3::random_in_unit_sphere().unit()
     }
