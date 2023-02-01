@@ -15,6 +15,37 @@ impl Camera {
             self.lower_left_corner + self.horizontal * u + self.vertical * v - self.origin,
         )
     }
+
+    pub fn new(look_from: Vec3, look_at: Vec3, vup: Vec3, vfov: f64, aspect_ratio: f64) -> Self {
+        let theta = vfov.to_radians();
+        let h = (theta / 2.0).tan();
+        let view_height = 2.0 * h;
+        let view_width = aspect_ratio * view_height;
+
+        let focal_length = 1.0;
+
+        let w = (look_from - look_at).unit();
+        let u = vup.cross(&w).unit();
+        let v = w.cross(&u);
+
+        let origin = look_from;
+        let horizontal = u * view_width;
+        let vertical = v * view_height;
+        let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - w * focal_length;
+        Self {
+            origin,
+            lower_left_corner,
+            horizontal,
+            vertical,
+        }
+    }
+
+    pub fn get_ray(&self, u: f64, v: f64) -> Ray {
+        Ray::new(
+            self.origin,
+            self.lower_left_corner + self.horizontal * u + self.vertical * v - self.origin,
+        )
+    }
 }
 
 impl Default for Camera {

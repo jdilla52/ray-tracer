@@ -22,35 +22,31 @@ pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 200;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
-    let camera = camera::Camera::default();
+    let camera = camera::Camera::new(
+        Vec3::new(-2., 2., 1.),
+        Vec3::new(0., 0., -1.),
+        Vec3::new(0., 1., 0.),
+        20.0,
+        aspect_ratio,
+    );
+
     let samples = 10;
     let max_depth = 20;
 
+    let r = (std::f64::consts::PI / 4.0).cos();
+
     let world = HittableList::new(vec![
         Box::new(sphere::Sphere::new(
-            Vec3::new(0.0, 0.0, -1.0),
-            0.5,
-            Rc::new(Lambertian::new(Vec3::new(0.7, 0.3, 0.3))),
+            Vec3::new(-r, 0.0, -1.0),
+            r,
+            Rc::new(Lambertian::new(Vec3::new(0., 0., 1.))),
         )),
         Box::new(sphere::Sphere::new(
-            Vec3::new(-1.0, 0., -1.0),
-            -0.5,
-            Rc::new(Dieletric::new(1.5)),
-        )),
-        Box::new(sphere::Sphere::new(
-            Vec3::new(1.0, 0., -1.0),
-            0.5,
-            Rc::new(Metal::new(Vec3::new(0.8, 0.6, 0.2), 1.0)),
-        )),
-        Box::new(sphere::Sphere::new(
-            Vec3::new(0.0, -100.5, -1.0),
-            100.0,
-            Rc::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0))),
+            Vec3::new(r, 0., -1.0),
+            r,
+            Rc::new(Lambertian::new(Vec3::new(1.0, 0., 0.))),
         )),
     ]);
-
-    // camera
-    let camera = camera::Camera::default();
 
     let mut output = File::create(path)?;
     writeln!(&mut output, "P3\n{} {}\n255", image_width, image_height)?;
