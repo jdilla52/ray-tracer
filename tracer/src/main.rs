@@ -1,7 +1,10 @@
 mod error;
+mod hittable;
 mod ray;
+mod sphere;
 mod vec3;
 
+use crate::hittable::{Hittable, HittableList};
 use crate::ray::Ray;
 use crate::vec3::Vec3;
 use error::TracerResult;
@@ -12,6 +15,11 @@ pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
+
+    let world = HittableList::new(vec![
+        Box::new(sphere::Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)),
+        Box::new(sphere::Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)),
+    ]);
 
     // camera
     let viewport_height = 2.0;
@@ -39,7 +47,7 @@ pub fn write_image(path: String) -> TracerResult<()> {
                 origin,
                 lower_left_corner + horizontal * u + vertical * v - origin,
             );
-            let color = ray_color(&ray);
+            let color = ray_color(&ray, &world);
             writeln!(&mut output, "{}", color.as_color())?;
         }
     }
@@ -60,10 +68,9 @@ pub fn hit_sphere(center: Vec3, radius: f64, ray: &Ray) -> Option<f64> {
     }
 }
 
-pub fn ray_color(ray: &ray::Ray) -> vec3::Vec3 {
-    if let Some(t) = hit_sphere(vec3::Vec3::new(0.0, 0.0, -1.0), 0.5, ray) {
-        let normal = (ray.at(t) - Vec3::new(0.0, 0.0, -1.0)).unit();
-        Vec3::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0) * 0.5
+pub fn ray_color(ray: &ray::Ray, world: &HittableList) -> vec3::Vec3 {
+    if let Some(t) = world.hit(ray, 0.0, f64::INFINITY) {
+        (t.normal + Vec3::new(1., 1., 1.)) * 0.5
     } else {
         let unit_direction = ray.direction.unit();
         let t = 0.5 * (unit_direction.y + 1.0);
@@ -72,5 +79,5 @@ pub fn ray_color(ray: &ray::Ray) -> vec3::Vec3 {
 }
 
 fn main() {
-    write_image("./output/shaded_sphere.ppm".to_string()).unwrap();
+    write_image("./output/multiple_spheres.ppm".to_string()).unwrap();
 }
