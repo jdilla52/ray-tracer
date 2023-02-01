@@ -34,12 +34,12 @@ pub fn write_image(path: String) -> TracerResult<()> {
         Box::new(sphere::Sphere::new(
             Vec3::new(-1.0, 0., -1.0),
             0.5,
-            Rc::new(Metal::new(Vec3::new(0.8, 0.8, 0.8))),
+            Rc::new(Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.2)),
         )),
         Box::new(sphere::Sphere::new(
             Vec3::new(1.0, 0., -1.0),
             0.5,
-            Rc::new(Metal::new(Vec3::new(0.8, 0.6, 0.2))),
+            Rc::new(Metal::new(Vec3::new(0.8, 0.6, 0.2), 1.0)),
         )),
         Box::new(sphere::Sphere::new(
             Vec3::new(0.0, -100.5, -1.0),
