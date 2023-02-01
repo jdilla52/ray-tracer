@@ -48,6 +48,32 @@ impl Vec3 {
             z: self.x * other.y - self.y * other.x,
         }
     }
+
+    pub fn random() -> Vec3 {
+        Vec3 {
+            x: rand::random(),
+            y: rand::random(),
+            z: rand::random(),
+        }
+    }
+
+    pub fn random_range(min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            x: rand::random::<f64>() * (max - min) + min,
+            y: rand::random::<f64>() * (max - min) + min,
+            z: rand::random::<f64>() * (max - min) + min,
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random_range(-1.0, 1.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
     pub fn unit(&self) -> Vec3 {
         let len = self.len();
 
@@ -66,12 +92,18 @@ impl Vec3 {
         }
     }
 
-    pub fn as_color(&self) -> String {
-        let ir = (255.999 * self.x) as i32;
-        let ig = (255.999 * self.y) as i32;
-        let ib = (255.999 * self.z) as i32;
+    pub fn clamp(&self, min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            x: self.x.max(min).min(max),
+            y: self.y.max(min).min(max),
+            z: self.z.max(min).min(max),
+        }
+    }
 
-        format!("{} {} {}", ir, ig, ib)
+    pub fn as_aggregated_color(&self, samples: i32) -> String {
+        let scaled = *self * (1.0 / samples as f64);
+        let clamped = scaled.clamp(0.0, 0.999) * 256.0;
+        format!("{} {} {}", clamped.x, clamped.y, clamped.z)
     }
 }
 
