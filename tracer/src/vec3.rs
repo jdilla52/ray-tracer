@@ -74,6 +74,27 @@ impl Vec3 {
         }
     }
 
+    pub fn random_in_hemisphere(&self) -> Vec3 {
+        let in_unit_sphere = Vec3::random_in_unit_sphere();
+        if in_unit_sphere.dot(self) > 0.0 {
+            in_unit_sphere
+        } else {
+            -in_unit_sphere
+        }
+    }
+
+    pub fn random_unit_vector() -> Vec3 {
+        Vec3::random_in_unit_sphere().unit()
+    }
+
+    pub fn sqrt(&self) -> Vec3 {
+        Vec3 {
+            x: self.x.sqrt(),
+            y: self.y.sqrt(),
+            z: self.z.sqrt(),
+        }
+    }
+
     pub fn unit(&self) -> Vec3 {
         let len = self.len();
 
@@ -101,7 +122,7 @@ impl Vec3 {
     }
 
     pub fn as_aggregated_color(&self, samples: i32) -> String {
-        let scaled = *self * (1.0 / samples as f64);
+        let scaled = (*self * (1.0 / samples as f64)).sqrt();
         let clamped = scaled.clamp(0.0, 0.999) * 256.0;
         format!("{} {} {}", clamped.x, clamped.y, clamped.z)
     }

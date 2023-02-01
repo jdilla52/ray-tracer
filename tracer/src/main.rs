@@ -68,8 +68,8 @@ pub fn ray_color(ray: &ray::Ray, world: &HittableList, depth: i32) -> vec3::Vec3
         return vec3::Vec3::zero();
     }
 
-    if let Some(t) = world.hit(ray, 0.0, f64::INFINITY) {
-        let target = t.position + t.normal + Vec3::random_in_unit_sphere();
+    if let Some(t) = world.hit(ray, 0.001, f64::INFINITY) {
+        let target = t.position + t.normal + Vec3::random_unit_vector();
         ray_color(&Ray::new(t.position, target - t.position), world, depth - 1) * 0.5
     } else {
         let unit_direction = ray.direction.unit();
@@ -79,5 +79,5 @@ pub fn ray_color(ray: &ray::Ray, world: &HittableList, depth: i32) -> vec3::Vec3
 }
 
 fn main() {
-    write_image("./output/multiple_spheres.ppm".to_string()).unwrap();
+    write_image("./output/gamma_acne.ppm".to_string()).unwrap();
 }
