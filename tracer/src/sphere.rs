@@ -1,34 +1,34 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::vec3::Vec3;
+use glam::Vec3A;
 use std::rc::Rc;
 
 pub struct Sphere {
-    pub center: Vec3,
-    pub radius: f64,
+    pub center: Vec3A,
+    pub radius: f32,
     pub material: Rc<dyn Material>,
 }
 
 pub struct Square {
-    pub center: Vec3,
-    pub radius: f64,
+    pub center: Vec3A,
+    pub radius: f32,
 }
 
 impl Square {
-    pub fn new(center: Vec3, radius: f64) -> Square {
+    pub fn new(center: Vec3A, radius: f32) -> Square {
         Square { center, radius }
     }
 }
 
 impl Hittable for Square {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         None
     }
 }
 
 impl Sphere {
-    pub fn new(center: Vec3, radius: f64, material: Rc<dyn Material>) -> Sphere {
+    pub fn new(center: Vec3A, radius: f32, material: Rc<dyn Material>) -> Sphere {
         Sphere {
             center,
             radius,
@@ -38,10 +38,10 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = ray.origin - self.center;
         let a = ray.direction.length_squared();
-        let half_b = oc.dot(&ray.direction);
+        let half_b = oc.dot(ray.direction);
         let c = oc.length_squared() - self.radius * self.radius;
         let discriminant = half_b * half_b - a * c;
 
@@ -62,7 +62,7 @@ impl Hittable for Sphere {
 
         let position = ray.at(root);
         let outward_normal = (position - self.center) / self.radius;
-        if ray.direction.dot(&outward_normal) < 0.0 {
+        if ray.direction.dot(outward_normal) < 0.0 {
             Some(HitRecord {
                 root,
                 position,
