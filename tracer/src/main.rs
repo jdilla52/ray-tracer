@@ -18,6 +18,7 @@ use crate::material::metal::Metal;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::texture::checker::Checker;
+use crate::texture::noise::Noise;
 use crate::texture::solid::Solid;
 use error::TracerResult;
 use glam::Vec3A;
@@ -33,12 +34,12 @@ pub fn write_image(path: String) -> TracerResult<()> {
     let look_at = Vec3A::new(0., 0., -1.);
     let vup = Vec3A::new(0., 1., 0.);
     let dist_to_focus = (look_from - look_at).length();
-    let aperture = 2.0;
+    let aperture = 0.1;
     let camera = camera::Camera::new(
         look_from,
         look_at,
         vup,
-        20.0,
+        40.0,
         aspect_ratio,
         aperture,
         dist_to_focus,
@@ -56,7 +57,7 @@ pub fn write_image(path: String) -> TracerResult<()> {
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(0.0, 0.0, -1.0),
                 0.5,
-                Rc::new(Lambertian::new(Rc::new(Solid::new_from_rgb(0.1, 0.2, 0.3)))),
+                Rc::new(Lambertian::new(Rc::new(Noise::new(2.0)))),
             )),
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(-1.0, 0., -1.0),
@@ -71,11 +72,7 @@ pub fn write_image(path: String) -> TracerResult<()> {
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(0.0, -100.5, -1.0),
                 100.0,
-                Rc::new(Lambertian::new(Rc::new(Checker::new(
-                    Rc::new(Solid::new_from_rgb(0.2, 0.3, 0.1)),
-                    Rc::new(Solid::new_from_rgb(0.9, 0.9, 0.9)),
-                    10.0,
-                )))),
+                Rc::new(Lambertian::new(Rc::new(Noise::new(2.0)))),
             )),
         ],
         0.0,
