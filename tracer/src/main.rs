@@ -18,6 +18,7 @@ use crate::material::metal::Metal;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::texture::checker::Checker;
+use crate::texture::image::Image;
 use crate::texture::noise::Noise;
 use crate::texture::solid::Solid;
 use error::TracerResult;
@@ -26,20 +27,31 @@ use std::fs::File;
 use std::io::Write;
 use std::rc::Rc;
 
+fn earth() -> HittableList {
+    let mut world = HittableList::new(vec![Rc::new(sphere::Sphere::new(
+        Vec3A::new(0.0, 0.0, 0.0),
+        2.0,
+        Rc::new(Lambertian::new(Rc::new(
+            Image::new("./assets/earthmap.jpg").unwrap(),
+        ))),
+    ))]);
+    world
+}
+
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (image_width as f32 / aspect_ratio) as i32;
-    let look_from = Vec3A::new(3., 3., 2.);
-    let look_at = Vec3A::new(0., 0., -1.);
+    let look_from = Vec3A::new(13., 2., 3.);
+    let look_at = Vec3A::new(0., 0., 0.);
     let vup = Vec3A::new(0., 1., 0.);
     let dist_to_focus = (look_from - look_at).length();
-    let aperture = 0.1;
+    let aperture = 0.5;
     let camera = camera::Camera::new(
         look_from,
         look_at,
         vup,
-        40.0,
+        20.0,
         aspect_ratio,
         aperture,
         dist_to_focus,
@@ -47,37 +59,10 @@ pub fn write_image(path: String) -> TracerResult<()> {
         1.0,
     );
 
-    let samples = 10;
-    let max_depth = 20;
+    let samples = 20;
+    let max_depth = 10;
 
-    let r = (std::f32::consts::PI / 4.0).cos();
-
-    let world = HittableList::new(vec![Rc::new(BvhNode::from_list(
-        vec![
-            Rc::new(sphere::Sphere::new(
-                Vec3A::new(0.0, 0.0, -1.0),
-                0.5,
-                Rc::new(Lambertian::new(Rc::new(Noise::new(2.0)))),
-            )),
-            Rc::new(sphere::Sphere::new(
-                Vec3A::new(-1.0, 0., -1.0),
-                0.5,
-                Rc::new(Metal::new(Rc::new(Solid::new_from_rgb(0.8, 0.8, 0.8)), 0.2)),
-            )),
-            Rc::new(sphere::Sphere::new(
-                Vec3A::new(1.0, 0., -1.0),
-                0.5,
-                Rc::new(Metal::new(Rc::new(Solid::new_from_rgb(0.8, 0.6, 0.2)), 1.0)),
-            )),
-            Rc::new(sphere::Sphere::new(
-                Vec3A::new(0.0, -100.5, -1.0),
-                100.0,
-                Rc::new(Lambertian::new(Rc::new(Noise::new(2.0)))),
-            )),
-        ],
-        0.0,
-        1.0,
-    )?)]);
+    let world = earth();
 
     let mut output = File::create(path)?;
     writeln!(&mut output, "P3\n{} {}\n255", image_width, image_height)?;

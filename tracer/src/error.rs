@@ -8,7 +8,7 @@ pub enum TracerError {
     FsError(#[from] std::io::Error),
 
     #[error("image error")]
-    ImageError,
+    ImageError(#[from] image::ImageError),
 
     #[error("null bound box error")]
     BvhBoundingBoxError,
