@@ -1,3 +1,4 @@
+use crate::aabb::Aabb;
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::ray::Ray;
@@ -25,6 +26,9 @@ impl Hittable for Square {
     fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         None
     }
+    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+        None
+    }
 }
 
 impl Sphere {
@@ -38,6 +42,12 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
+    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+        Some(Aabb::new(
+            self.center - Vec3A::splat(self.radius),
+            self.center + Vec3A::splat(self.radius),
+        ))
+    }
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = ray.origin - self.center;
         let a = ray.direction.length_squared();

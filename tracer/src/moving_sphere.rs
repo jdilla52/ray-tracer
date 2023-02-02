@@ -1,8 +1,9 @@
+use crate::aabb::Aabb;
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::ray::Ray;
-use std::rc::Rc;
 use glam::Vec3A;
+use std::rc::Rc;
 
 pub struct MovingSphere {
     pub center0: Vec3A,
@@ -12,7 +13,12 @@ pub struct MovingSphere {
 }
 
 impl MovingSphere {
-    pub fn new(center0: Vec3A, center1: Vec3A, radius: f32, material: Rc<dyn Material>) -> MovingSphere {
+    pub fn new(
+        center0: Vec3A,
+        center1: Vec3A,
+        radius: f32,
+        material: Rc<dyn Material>,
+    ) -> MovingSphere {
         MovingSphere {
             center0,
             center1,
@@ -27,6 +33,18 @@ impl MovingSphere {
 }
 
 impl Hittable for MovingSphere {
+    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+        let box0 = Aabb::new(
+            self.center(t0) - Vec3A::splat(self.radius),
+            self.center(t0) + Vec3A::splat(self.radius),
+        );
+        let box1 = Aabb::new(
+            self.center(t1) - Vec3A::splat(self.radius),
+            self.center(t1) + Vec3A::splat(self.radius),
+        );
+        Some(Aabb::surrounding_box(&box0, &box1))
+    }
+
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = ray.origin - self.center(ray.time);
         let a = ray.direction.length_squared();

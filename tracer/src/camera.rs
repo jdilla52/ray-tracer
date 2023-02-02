@@ -1,6 +1,6 @@
 use crate::ray::Ray;
-use glam::Vec3A;
 use crate::vec3;
+use glam::Vec3A;
 
 pub struct Camera {
     pub horizontal: Vec3A,
@@ -59,7 +59,7 @@ impl Camera {
             w,
             lens_radius: aperture / 2.0,
             time0,
-            time1
+            time1,
         }
     }
 
@@ -69,7 +69,7 @@ impl Camera {
         Ray::new(
             self.origin + offset,
             self.lower_left_corner + self.horizontal * u + self.vertical * v - self.origin - offset,
-            self.time0 + rand::random::<f32>() * (self.time1 - self.time0)
+            self.time0 + rand::random::<f32>() * (self.time1 - self.time0),
         )
     }
 }
