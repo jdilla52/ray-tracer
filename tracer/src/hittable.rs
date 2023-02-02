@@ -1,12 +1,12 @@
 use crate::material::Material;
 use crate::ray::Ray;
-use crate::vec3::Vec3;
+use glam::Vec3A;
 use std::rc::Rc;
 
 pub struct HitRecord {
-    pub root: f64,
-    pub position: Vec3,
-    pub normal: Vec3,
+    pub root: f32,
+    pub position: Vec3A,
+    pub normal: Vec3A,
     pub front_face: bool,
     pub material: Rc<dyn Material>,
 }
@@ -16,7 +16,7 @@ impl HitRecord {}
 // enum Hittable
 
 pub trait Hittable {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
 }
 
 pub struct HittableList {
@@ -28,7 +28,7 @@ impl HittableList {
         HittableList { objects }
     }
 
-    pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    pub fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         // let mut hit_anything = None;
         // let mut closest_so_far = t_max;
 

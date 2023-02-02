@@ -4,10 +4,10 @@ pub mod metal;
 
 use crate::hittable::HitRecord;
 use crate::ray::Ray;
-use crate::vec3::Vec3;
+use glam::Vec3A;
 
 pub struct ScatterRecord {
-    pub attenuation: Vec3,
+    pub attenuation: Vec3A,
     pub scattered: Ray,
 }
 
@@ -15,7 +15,7 @@ pub struct ScatterRecord {
 // starting to doubt if using pointers to trait objects is the best approach
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
-    fn color(&self) -> Vec3;
+    fn color(&self) -> Vec3A;
 }
 //
 // trait MaterialClone {
