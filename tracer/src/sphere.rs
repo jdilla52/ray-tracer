@@ -31,6 +31,14 @@ impl Hittable for Square {
     }
 }
 
+pub fn get_sphere_uv(p: Vec3A) -> (f32, f32) {
+    let theta = -p.y.acos();
+    let phi = -p.z.atan2(p.x) + std::f32::consts::PI;
+    (phi / (TWO_PI), theta / std::f32::consts::PI)
+}
+
+static TWO_PI: f32 = std::f32::consts::PI * 2.0;
+
 impl Sphere {
     pub fn new(center: Vec3A, radius: f32, material: Rc<dyn Material>) -> Sphere {
         Sphere {
@@ -48,6 +56,7 @@ impl Hittable for Sphere {
             self.center + Vec3A::splat(self.radius),
         ))
     }
+
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = ray.origin - self.center;
         let a = ray.direction.length_squared();
@@ -73,20 +82,27 @@ impl Hittable for Sphere {
         let position = ray.at(root);
         let outward_normal = (position - self.center) / self.radius;
         if ray.direction.dot(outward_normal) < 0.0 {
+            let (u, v) = get_sphere_uv(outward_normal);
             Some(HitRecord {
                 root,
                 position,
                 normal: outward_normal,
                 front_face: true,
                 material: self.material.clone(),
+                u,
+                v,
             })
         } else {
+            let outward_normal = -outward_normal;
+            let (u, v) = get_sphere_uv(outward_normal);
             Some(HitRecord {
                 root,
                 position,
                 normal: -outward_normal,
                 front_face: false,
                 material: self.material.clone(),
+                u,
+                v,
             })
         }
     }

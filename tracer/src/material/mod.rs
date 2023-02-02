@@ -15,7 +15,7 @@ pub struct ScatterRecord {
 // starting to doubt if using pointers to trait objects is the best approach
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
-    fn color(&self) -> Vec3A;
+    fn color(&self, u: f32, v: f32) -> Vec3A;
 }
 //
 // trait MaterialClone {

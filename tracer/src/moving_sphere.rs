@@ -4,6 +4,7 @@ use crate::material::Material;
 use crate::ray::Ray;
 use glam::Vec3A;
 use std::rc::Rc;
+use crate::sphere::get_sphere_uv;
 
 pub struct MovingSphere {
     pub center0: Vec3A,
@@ -69,21 +70,29 @@ impl Hittable for MovingSphere {
 
         let position = ray.at(root);
         let outward_normal = (position - self.center(ray.time)) / self.radius;
+
         if ray.direction.dot(outward_normal) < 0.0 {
+            let (u, v) = get_sphere_uv(outward_normal);
             Some(HitRecord {
                 root,
                 position,
                 normal: outward_normal,
                 front_face: true,
                 material: self.material.clone(),
+                u,
+                v,
             })
         } else {
+            let outward_normal = -outward_normal;
+            let (u, v) = get_sphere_uv(outward_normal);
             Some(HitRecord {
                 root,
                 position,
-                normal: -outward_normal,
+                normal: outward_normal,
                 front_face: false,
                 material: self.material.clone(),
+                u,
+                v,
             })
         }
     }

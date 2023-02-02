@@ -1,16 +1,19 @@
+use std::rc::Rc;
 use crate::hittable::HitRecord;
 use crate::material::{Material, ScatterRecord};
 use crate::ray::Ray;
 use crate::vec3;
 use glam::Vec3A;
+use crate::texture::Texture;
 
 pub struct Dieletric {
     pub ref_idx: f32,
+    pub texture: Rc<dyn Texture>,
 }
 
 impl Dieletric {
-    pub fn new(ref_idx: f32) -> Self {
-        Dieletric { ref_idx }
+    pub fn new(ref_idx: f32, texture: Rc<dyn Texture>) -> Self {
+        Dieletric { ref_idx, texture }
     }
     fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
         // Use Schlick's approximation for reflectance.
@@ -23,7 +26,7 @@ impl Dieletric {
 impl Material for Dieletric {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
         let reflected = vec3::reflect(r_in.direction.normalize(), rec.normal);
-        let attenuation = Vec3A::new(1.0, 1.0, 1.0);
+        // let attenuation = Vec3A::new(1.0, 1.0, 1.0);
 
         let refraction_ratio = if rec.front_face {
             1.0 / self.ref_idx
@@ -45,12 +48,12 @@ impl Material for Dieletric {
         };
 
         Some(ScatterRecord {
-            attenuation,
+            attenuation: self.texture.value(rec.u, rec.v, rec.position),
             scattered: Ray::new(rec.position, direction, r_in.time),
         })
     }
 
-    fn color(&self) -> Vec3A {
+    fn color(&self, u: f32, v: f32) -> Vec3A {
         Vec3A::ZERO
     }
 }

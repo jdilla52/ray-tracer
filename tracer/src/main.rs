@@ -8,6 +8,7 @@ mod moving_sphere;
 mod ray;
 mod sphere;
 mod vec3;
+mod texture;
 
 use crate::bvh::BvhNode;
 use crate::hittable::{Hittable, HittableList};
@@ -21,6 +22,7 @@ use glam::Vec3A;
 use std::fs::File;
 use std::io::Write;
 use std::rc::Rc;
+use crate::texture::solid_color::SolidColor;
 
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
@@ -53,22 +55,22 @@ pub fn write_image(path: String) -> TracerResult<()> {
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(0.0, 0.0, -1.0),
                 0.5,
-                Rc::new(Lambertian::new(Vec3A::new(0.1, 0.2, 0.3))),
+                Rc::new(Lambertian::new(Rc::new(SolidColor::new_from_rgb(0.1, 0.2, 0.3)))),
             )),
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(-1.0, 0., -1.0),
                 0.5,
-                Rc::new(Metal::new(Vec3A::new(0.8, 0.8, 0.8), 0.2)),
+                Rc::new(Metal::new(Rc::new(SolidColor::new_from_rgb(0.8, 0.8, 0.8)), 0.2)),
             )),
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(1.0, 0., -1.0),
                 0.5,
-                Rc::new(Metal::new(Vec3A::new(0.8, 0.6, 0.2), 1.0)),
+                Rc::new(Metal::new(Rc::new(SolidColor::new_from_rgb(0.8, 0.6, 0.2)), 1.0)),
             )),
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(0.0, -100.5, -1.0),
                 100.0,
-                Rc::new(Lambertian::new(Vec3A::new(0.8, 0.8, 0.0))),
+                Rc::new(Lambertian::new(Rc::new(SolidColor::new_from_rgb(0.8, 0.8, 0.0)))),
             )),
         ],
         0.0,

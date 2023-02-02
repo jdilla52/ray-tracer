@@ -1,17 +1,19 @@
+use std::rc::Rc;
 use crate::hittable::HitRecord;
 use crate::material::{Material, ScatterRecord};
 use crate::ray::Ray;
 use crate::vec3;
 use glam::Vec3A;
+use crate::texture::Texture;
 
 #[derive(Clone)]
 pub struct Metal {
-    pub albedo: Vec3A,
+    pub albedo: Rc<dyn Texture>,
     pub fuzz: f32,
 }
 
 impl Metal {
-    pub fn new(albedo: Vec3A, fuzz: f32) -> Self {
+    pub fn new(albedo: Rc<dyn Texture>, fuzz: f32) -> Self {
         Metal { albedo, fuzz }
     }
 }
@@ -23,7 +25,7 @@ impl Material for Metal {
 
         if fuzzed_direction.dot(rec.normal) > 0.0 {
             Some(ScatterRecord {
-                attenuation: self.albedo,
+                attenuation: self.albedo.value(rec.u, rec.v, rec.position),
                 scattered: Ray::new(rec.position, fuzzed_direction, r_in.time),
             })
         } else {
@@ -31,7 +33,7 @@ impl Material for Metal {
         }
     }
 
-    fn color(&self) -> Vec3A {
-        self.albedo
+    fn color(&self, u: f32, v: f32) -> Vec3A {
+        self.albedo.value(u, v, Vec3A::ZERO)
     }
 }

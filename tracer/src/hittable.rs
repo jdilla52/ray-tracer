@@ -10,6 +10,8 @@ pub struct HitRecord {
     pub normal: Vec3A,
     pub front_face: bool,
     pub material: Rc<dyn Material>,
+    pub u: f32,
+    pub v: f32,
 }
 
 impl HitRecord {}
