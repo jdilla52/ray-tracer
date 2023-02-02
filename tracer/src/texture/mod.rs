@@ -1,4 +1,5 @@
-pub mod solid_color;
+pub mod checker;
+pub mod solid;
 
 use glam::Vec3A;
 

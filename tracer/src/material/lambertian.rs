@@ -1,10 +1,10 @@
-use std::rc::Rc;
 use crate::hittable::HitRecord;
 use crate::material::{Material, ScatterRecord};
 use crate::ray::Ray;
+use crate::texture::Texture;
 use crate::vec3;
 use glam::Vec3A;
-use crate::texture::Texture;
+use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Lambertian {

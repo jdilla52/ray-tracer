@@ -2,9 +2,9 @@ use crate::aabb::Aabb;
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::ray::Ray;
+use crate::sphere::get_sphere_uv;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::sphere::get_sphere_uv;
 
 pub struct MovingSphere {
     pub center0: Vec3A,

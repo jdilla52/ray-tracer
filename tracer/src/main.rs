@@ -7,8 +7,8 @@ mod material;
 mod moving_sphere;
 mod ray;
 mod sphere;
-mod vec3;
 mod texture;
+mod vec3;
 
 use crate::bvh::BvhNode;
 use crate::hittable::{Hittable, HittableList};
@@ -17,12 +17,13 @@ use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
 use crate::material::Material;
 use crate::ray::Ray;
+use crate::texture::checker::Checker;
+use crate::texture::solid::Solid;
 use error::TracerResult;
 use glam::Vec3A;
 use std::fs::File;
 use std::io::Write;
 use std::rc::Rc;
-use crate::texture::solid_color::SolidColor;
 
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
@@ -55,22 +56,26 @@ pub fn write_image(path: String) -> TracerResult<()> {
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(0.0, 0.0, -1.0),
                 0.5,
-                Rc::new(Lambertian::new(Rc::new(SolidColor::new_from_rgb(0.1, 0.2, 0.3)))),
+                Rc::new(Lambertian::new(Rc::new(Solid::new_from_rgb(0.1, 0.2, 0.3)))),
             )),
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(-1.0, 0., -1.0),
                 0.5,
-                Rc::new(Metal::new(Rc::new(SolidColor::new_from_rgb(0.8, 0.8, 0.8)), 0.2)),
+                Rc::new(Metal::new(Rc::new(Solid::new_from_rgb(0.8, 0.8, 0.8)), 0.2)),
             )),
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(1.0, 0., -1.0),
                 0.5,
-                Rc::new(Metal::new(Rc::new(SolidColor::new_from_rgb(0.8, 0.6, 0.2)), 1.0)),
+                Rc::new(Metal::new(Rc::new(Solid::new_from_rgb(0.8, 0.6, 0.2)), 1.0)),
             )),
             Rc::new(sphere::Sphere::new(
                 Vec3A::new(0.0, -100.5, -1.0),
                 100.0,
-                Rc::new(Lambertian::new(Rc::new(SolidColor::new_from_rgb(0.8, 0.8, 0.0)))),
+                Rc::new(Lambertian::new(Rc::new(Checker::new(
+                    Rc::new(Solid::new_from_rgb(0.2, 0.3, 0.1)),
+                    Rc::new(Solid::new_from_rgb(0.9, 0.9, 0.9)),
+                    10.0,
+                )))),
             )),
         ],
         0.0,
