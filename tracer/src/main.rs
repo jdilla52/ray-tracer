@@ -5,6 +5,7 @@ mod material;
 mod ray;
 mod sphere;
 mod vec3;
+mod moving_sphere;
 
 use crate::hittable::{Hittable, HittableList};
 use crate::material::dieletric::Dieletric;
@@ -20,7 +21,7 @@ use std::rc::Rc;
 
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 800;
+    let image_width = 400;
     let image_height = (image_width as f32 / aspect_ratio) as i32;
     let look_from = Vec3A::new(3., 3., 2.);
     let look_at = Vec3A::new(0., 0., -1.);
@@ -35,6 +36,9 @@ pub fn write_image(path: String) -> TracerResult<()> {
         aspect_ratio,
         aperture,
         dist_to_focus,
+        0.0,
+        1.0
+
     );
 
     let samples = 10;

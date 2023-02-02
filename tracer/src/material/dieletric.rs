@@ -46,7 +46,7 @@ impl Material for Dieletric {
 
         Some(ScatterRecord {
             attenuation,
-            scattered: Ray::new(rec.position, direction),
+            scattered: Ray::new(rec.position, direction, r_in.time),
         })
     }
 

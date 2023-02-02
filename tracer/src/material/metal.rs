@@ -18,13 +18,13 @@ impl Metal {
 
 impl Material for Metal {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
-        let scatter_direction = vec3::reflect(r_in.direction.normalize(), rec.normal);
-        let fuzzed_direction = scatter_direction + vec3::random_in_unit_sphere() * self.fuzz;
+        let reflected_direction = vec3::reflect(r_in.direction.normalize(), rec.normal);
+        let fuzzed_direction = reflected_direction + vec3::random_in_unit_sphere() * self.fuzz;
 
         if fuzzed_direction.dot(rec.normal) > 0.0 {
             Some(ScatterRecord {
                 attenuation: self.albedo,
-                scattered: Ray::new(rec.position, fuzzed_direction),
+                scattered: Ray::new(rec.position, fuzzed_direction, r_in.time),
             })
         } else {
             None

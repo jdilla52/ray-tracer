@@ -28,7 +28,7 @@ impl Material for Lambertian {
 
         Some(ScatterRecord {
             attenuation: self.albedo,
-            scattered: Ray::new(rec.position, scatter_direction),
+            scattered: Ray::new(rec.position, scatter_direction, r_in.time)
         })
     }
 
