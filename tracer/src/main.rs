@@ -9,18 +9,22 @@ mod ray;
 mod sphere;
 mod texture;
 mod vec3;
+mod xy_rect;
 
 use crate::bvh::BvhNode;
 use crate::hittable::{Hittable, HittableList};
 use crate::material::dieletric::Dieletric;
+use crate::material::diffuse_light::DiffuseLight;
 use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
 use crate::material::Material;
 use crate::ray::Ray;
+use crate::sphere::Sphere;
 use crate::texture::checker::Checker;
 use crate::texture::image::Image;
 use crate::texture::noise::Noise;
 use crate::texture::solid::Solid;
+use crate::xy_rect::XyRect;
 use error::TracerResult;
 use glam::Vec3A;
 use std::fs::File;
@@ -28,25 +32,50 @@ use std::io::Write;
 use std::rc::Rc;
 
 fn earth() -> HittableList {
-    let mut world = HittableList::new(vec![Rc::new(sphere::Sphere::new(
+    HittableList::new(vec![Rc::new(Sphere::new(
         Vec3A::new(0.0, 0.0, 0.0),
         2.0,
         Rc::new(Lambertian::new(Rc::new(
             Image::new("./assets/earthmap.jpg").unwrap(),
         ))),
-    ))]);
-    world
+    ))])
+}
+
+fn simple_light() -> HittableList {
+    let noise = Rc::new(Noise::new(4.0));
+    HittableList::new(vec![
+        Rc::new(Sphere::new(
+            Vec3A::new(0.0, -1000.0, 0.0),
+            1000.0,
+            Rc::new(Lambertian::new(noise.clone())),
+        )),
+        Rc::new(Sphere::new(
+            Vec3A::new(0.0, 2.0, 0.0), 2.0,
+            Rc::new(Lambertian::new(noise.clone())),
+        )),
+        Rc::new(XyRect::new(
+            3.0,
+            5.0,
+            1.0,
+            3.0,
+            -2.0,
+            Rc::new(DiffuseLight::new(Rc::new(Solid::new(Vec3A::new(
+                4.0, 4.0, 4.0,
+            ))))),
+        )),
+    ])
 }
 
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (image_width as f32 / aspect_ratio) as i32;
-    let look_from = Vec3A::new(13., 2., 3.);
-    let look_at = Vec3A::new(0., 0., 0.);
+    let look_from = Vec3A::new(26., 3., 6.);
+    let look_at = Vec3A::new(0., 2., 0.);
     let vup = Vec3A::new(0., 1., 0.);
     let dist_to_focus = (look_from - look_at).length();
-    let aperture = 0.5;
+    let aperture = 2.0;
+    let background = &Vec3A::new(0.0, 0.0, 0.0);
     let camera = camera::Camera::new(
         look_from,
         look_at,
@@ -59,10 +88,10 @@ pub fn write_image(path: String) -> TracerResult<()> {
         1.0,
     );
 
-    let samples = 20;
+    let samples = 400;
     let max_depth = 10;
 
-    let world = earth();
+    let world = simple_light();
 
     let mut output = File::create(path)?;
     writeln!(&mut output, "P3\n{} {}\n255", image_width, image_height)?;
@@ -77,7 +106,7 @@ pub fn write_image(path: String) -> TracerResult<()> {
                 let u = (i as f32 + rand::random::<f32>()) / (image_width - 1) as f32;
                 let v = (j as f32 + rand::random::<f32>()) / (image_height - 1) as f32;
                 let ray = camera.get_ray(u, v);
-                color = color + ray_color(&ray, &world, max_depth);
+                color = color + ray_color(&ray, background, &world, max_depth);
             }
             writeln!(&mut output, "{}", vec3::as_aggregated_color(color, samples))?;
         }
@@ -99,22 +128,25 @@ pub fn hit_sphere(center: Vec3A, radius: f32, ray: &Ray) -> Option<f32> {
     }
 }
 
-pub fn ray_color(ray: &ray::Ray, world: &HittableList, depth: i32) -> Vec3A {
+pub fn ray_color(
+    ray: &ray::Ray,
+    background_color: &Vec3A,
+    world: &HittableList,
+    depth: i32,
+) -> Vec3A {
     if depth <= 0 {
         return Vec3A::ZERO;
     }
 
     if let Some(t) = world.hit(ray, 0.001, f32::INFINITY) {
-        let target = t.position + t.normal + vec3::random_in_unit_sphere().normalize();
+        let emitted = t.material.emitted(t.u, t.v, t.position);
         return if let Some(r) = t.material.scatter(ray, &t) {
-            r.attenuation * ray_color(&r.scattered, world, depth - 1)
+            emitted + r.attenuation * ray_color(&r.scattered, background_color, world, depth - 1)
         } else {
-            Vec3A::ZERO
+            emitted
         };
     } else {
-        let unit_direction = ray.direction.normalize();
-        let t = 0.5 * (unit_direction.y + 1.0);
-        Vec3A::ONE * (1.0 - t) + Vec3A::new(0.5, 0.7, 1.0) * t
+        return *background_color;
     }
 }
 

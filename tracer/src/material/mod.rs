@@ -1,4 +1,5 @@
 pub mod dieletric;
+pub mod diffuse_light;
 pub mod lambertian;
 pub mod metal;
 
@@ -16,6 +17,9 @@ pub struct ScatterRecord {
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
     fn color(&self, u: f32, v: f32) -> Vec3A;
+    fn emitted(&self, u: f32, v: f32, p: Vec3A) -> Vec3A {
+        Vec3A::ZERO
+    }
 }
 //
 // trait MaterialClone {

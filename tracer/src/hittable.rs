@@ -14,7 +14,33 @@ pub struct HitRecord {
     pub v: f32,
 }
 
-impl HitRecord {}
+impl HitRecord {
+    pub fn new(
+        root: f32,
+        ray: &Ray,
+        outward_normal: Vec3A,
+        material: Rc<dyn Material>,
+        u: f32,
+        v: f32,
+    ) -> Self {
+        let position = ray.at(root);
+        let front_face = ray.direction.dot(outward_normal) < 0.0;
+        let normal = if front_face {
+            outward_normal
+        } else {
+            -outward_normal
+        };
+        HitRecord {
+            root,
+            position,
+            normal,
+            front_face,
+            material,
+            u,
+            v,
+        }
+    }
+}
 
 // enum Hittable
 
