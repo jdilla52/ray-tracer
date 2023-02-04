@@ -1,4 +1,4 @@
-use crate::hittable::HitRecord;
+use crate::geometry::hittable::HitRecord;
 use crate::material::{Material, ScatterRecord};
 use crate::ray::Ray;
 use crate::texture::solid::Solid;

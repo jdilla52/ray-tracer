@@ -3,7 +3,7 @@ pub mod diffuse_light;
 pub mod lambertian;
 pub mod metal;
 
-use crate::hittable::HitRecord;
+use crate::geometry::hittable::HitRecord;
 use crate::ray::Ray;
 use glam::Vec3A;
 
