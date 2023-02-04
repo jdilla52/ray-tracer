@@ -91,7 +91,11 @@ fn empty_box() -> HittableList {
             ))))),
         )),
         Rc::new(XzRect::new(
-            113., 443., 127., 432., 554.,
+            113.,
+            443.,
+            127.,
+            432.,
+            554.,
             Rc::new(DiffuseLight::new(Rc::new(Solid::new(Vec3A::new(
                 15.0, 15.0, 15.0,
             ))))),

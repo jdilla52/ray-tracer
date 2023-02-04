@@ -1,5 +1,6 @@
 pub mod aabb;
 pub mod bvh;
+pub mod cornell_box;
 pub mod hittable;
 pub mod moving_sphere;
 pub mod sphere;
