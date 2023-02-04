@@ -9,5 +9,6 @@ edition = "2021"
 anyhow = "1.0.68"
 glam = { version = "0.22.0", features = ["rand", "approx"] }
 image = "0.24"
+log = "0.4.17"
 rand = "0.8.5"
 thiserror = "1.0.38"

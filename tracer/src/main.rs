@@ -7,8 +7,11 @@ mod texture;
 mod vec3;
 
 use crate::geometry::bvh::BvhNode;
+use crate::geometry::cornell_box::CornellBox;
 use crate::geometry::hittable::{Hittable, HittableList};
+use crate::geometry::rotate_y::RotateY;
 use crate::geometry::sphere::Sphere;
+use crate::geometry::translate::Translate;
 use crate::geometry::xy_rect::XyRect;
 use crate::geometry::xz_rect::XzRect;
 use crate::geometry::yz_rect::YzRect;
@@ -105,6 +108,60 @@ fn empty_box() -> HittableList {
         Rc::new(XyRect::new(0.0, 555.0, 0.0, 555.0, 555., white.clone())),
     ])
 }
+
+fn two_boxes() -> HittableList {
+    let room = empty_box();
+
+    let white = Rc::new(Lambertian::new(Rc::new(Solid::new(Vec3A::new(
+        0.73, 0.73, 0.73,
+    )))));
+
+    HittableList::new(vec![
+        Rc::new(CornellBox::new(
+            Vec3A::new(130., 0.0, 65.0),
+            Vec3A::new(295.0, 165.0, 230.0),
+            white.clone(),
+        )),
+        Rc::new(CornellBox::new(
+            Vec3A::new(265., 0.0, 295.0),
+            Vec3A::new(430.0, 330.0, 460.0),
+            white.clone(),
+        )),
+        Rc::new(room),
+    ])
+}
+
+fn rotate_box() -> HittableList {
+    let room = empty_box();
+    let white = Rc::new(Lambertian::new(Rc::new(Solid::new(Vec3A::new(
+        0.73, 0.73, 0.73,
+    )))));
+    HittableList::new(vec![
+        // Rc::new(Translate::new(
+        //     Rc::new(RotateY::new(
+        Rc::new(CornellBox::new(
+            Vec3A::new(0.0, 0.0, 0.0),
+            Vec3A::new(165.0, 165.0, 165.0),
+            white.clone(),
+        )),
+        //         -18.0,
+        //     )),
+        //     Vec3A::new(130.0, 0.0, 65.0),
+        // )),
+        // Rc::new(Translate::new(
+        //     Rc::new(RotateY::new(
+        Rc::new(CornellBox::new(
+            Vec3A::new(0.0, 0.0, 0.0),
+            Vec3A::new(165.0, 330.0, 165.0),
+            white.clone(),
+        )),
+        //         15.0,
+        //     )),
+        //     Vec3A::new(265.0, 0.0, 295.0),
+        // )),
+        Rc::new(room),
+    ])
+}
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 16.0;
     let image_width = 400;
@@ -127,10 +184,10 @@ pub fn write_image(path: String) -> TracerResult<()> {
         1.0,
     );
 
-    let samples = 200;
+    let samples = 100;
     let max_depth = 10;
 
-    let world = empty_box();
+    let world = two_boxes();
 
     let mut output = File::create(path)?;
     writeln!(&mut output, "P3\n{} {}\n255", image_width, image_height)?;

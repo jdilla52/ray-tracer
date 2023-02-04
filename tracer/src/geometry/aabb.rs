@@ -5,7 +5,7 @@ use std::cmp::min;
 #[derive(Clone, Copy)]
 pub struct Aabb {
     pub(crate) min: Vec3A,
-    max: Vec3A,
+    pub(crate) max: Vec3A,
 }
 
 impl Aabb {

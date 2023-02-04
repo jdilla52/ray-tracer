@@ -40,6 +40,14 @@ impl HitRecord {
             v,
         }
     }
+    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Vec3A) {
+        self.front_face = ray.direction.dot(outward_normal) < 0.0;
+        self.normal = if self.front_face {
+            outward_normal
+        } else {
+            -outward_normal
+        };
+    }
 }
 
 // enum Hittable
@@ -57,37 +65,22 @@ impl HittableList {
     pub fn new(objects: Vec<Rc<dyn Hittable>>) -> Self {
         HittableList { objects }
     }
-
-    pub fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
-        // let mut hit_anything = None;
-        // let mut closest_so_far = t_max;
-
-        for object in &self.objects {
-            if let Some(hit_record) = object.hit(r, t_min, t_max) {
-                return Some(hit_record);
-                // closest_so_far = hit_record.root;
-                // hit_anything = Some(hit_record);
-            }
-        }
-        // hit_anything
-        None
-    }
 }
 
 impl Hittable for HittableList {
     fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
-        // let mut hit_anything = None;
-        // let mut closest_so_far = t_max;
+        let mut closest_so_far = t_max;
+        let mut hit_anything = None;
 
+        // might be interesting to see if we could presort the scene
+        // see if we can early out on the first hit
         for object in &self.objects {
-            if let Some(hit_record) = object.hit(r, t_min, t_max) {
-                return Some(hit_record);
-                // closest_so_far = hit_record.root;
-                // hit_anything = Some(hit_record);
+            if let Some(hit_record) = object.hit(r, t_min, closest_so_far) {
+                closest_so_far = hit_record.root;
+                hit_anything = Some(hit_record);
             }
         }
-        // hit_anything
-        None
+        hit_anything
     }
 
     fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
