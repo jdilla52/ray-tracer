@@ -1,11 +1,13 @@
 use crate::geometry::aabb::Aabb;
-use crate::geometry::hittable::{HitRecord, Hittable};
+use crate::intersection::hit_record::HitRecord;
 use crate::material::isotropic::Isotropic;
 use crate::material::Material;
-use crate::ray::Ray;
+use crate::intersection::ray::Ray;
 use glam::Vec3A;
 use log::debug;
 use std::rc::Rc;
+use crate::geometry::Hittable;
+
 pub struct ConstantMedium {
     pub boundary: Rc<dyn Hittable>,
     pub phase_function: Rc<dyn Material>,

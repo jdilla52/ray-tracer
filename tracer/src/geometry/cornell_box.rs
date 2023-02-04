@@ -1,12 +1,14 @@
 use crate::geometry::aabb::Aabb;
-use crate::geometry::hittable::{HitRecord, Hittable, HittableList};
+use crate::geometry::hittable::HittableList;
 use crate::geometry::xy_rect::XyRect;
 use crate::geometry::xz_rect::XzRect;
 use crate::geometry::yz_rect::YzRect;
 use crate::material::Material;
-use crate::ray::Ray;
+use crate::intersection::ray::Ray;
 use glam::Vec3A;
 use std::rc::Rc;
+use crate::geometry::Hittable;
+use crate::intersection::hit_record::HitRecord;
 
 pub struct CornellBox {
     pub min: Vec3A,

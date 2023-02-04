@@ -1,4 +1,4 @@
-use crate::ray::Ray;
+use crate::intersection::ray::Ray;
 use glam::Vec3A;
 use std::cmp::min;
 

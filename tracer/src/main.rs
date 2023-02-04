@@ -2,14 +2,15 @@ mod camera;
 mod error;
 mod geometry;
 mod material;
-pub mod ray;
+pub mod intersection;
 mod texture;
 mod vec3;
+mod renderer;
 
 use crate::geometry::bvh::BvhNode;
 use crate::geometry::constant_medium::ConstantMedium;
 use crate::geometry::cornell_box::CornellBox;
-use crate::geometry::hittable::{Hittable, HittableList};
+use crate::geometry::hittable::HittableList;
 use crate::geometry::rotate_y::RotateY;
 use crate::geometry::sphere::Sphere;
 use crate::geometry::translate::Translate;
@@ -21,7 +22,7 @@ use crate::material::diffuse_light::DiffuseLight;
 use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
 use crate::material::Material;
-use crate::ray::Ray;
+use crate::intersection::ray::Ray;
 use crate::texture::checker::Checker;
 use crate::texture::image::Image;
 use crate::texture::noise::Noise;
@@ -31,6 +32,7 @@ use glam::Vec3A;
 use std::fs::File;
 use std::io::Write;
 use std::rc::Rc;
+use geometry::Hittable;
 
 fn earth() -> HittableList {
     HittableList::new(vec![Rc::new(Sphere::new(
@@ -266,7 +268,7 @@ pub fn hit_sphere(center: Vec3A, radius: f32, ray: &Ray) -> Option<f32> {
 }
 
 pub fn ray_color(
-    ray: &ray::Ray,
+    ray: &Ray,
     background_color: &Vec3A,
     world: &HittableList,
     depth: i32,
