@@ -1,5 +1,6 @@
 pub mod dieletric;
 pub mod diffuse_light;
+pub mod isotropic;
 pub mod lambertian;
 pub mod metal;
 
@@ -10,6 +11,15 @@ use glam::Vec3A;
 pub struct ScatterRecord {
     pub attenuation: Vec3A,
     pub scattered: Ray,
+}
+
+impl ScatterRecord {
+    pub fn new(scattered: Ray, attenuation: Vec3A) -> Self {
+        Self {
+            attenuation,
+            scattered,
+        }
+    }
 }
 
 // todo move to rc over box - consider once we add threading

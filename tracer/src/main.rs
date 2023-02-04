@@ -7,6 +7,7 @@ mod texture;
 mod vec3;
 
 use crate::geometry::bvh::BvhNode;
+use crate::geometry::constant_medium::ConstantMedium;
 use crate::geometry::cornell_box::CornellBox;
 use crate::geometry::hittable::{Hittable, HittableList};
 use crate::geometry::rotate_y::RotateY;
@@ -137,28 +138,68 @@ fn rotate_box() -> HittableList {
         0.73, 0.73, 0.73,
     )))));
     HittableList::new(vec![
-        // Rc::new(Translate::new(
-        //     Rc::new(RotateY::new(
-        Rc::new(CornellBox::new(
-            Vec3A::new(0.0, 0.0, 0.0),
-            Vec3A::new(165.0, 165.0, 165.0),
-            white.clone(),
+        Rc::new(Translate::new(
+            Rc::new(RotateY::new(
+                Rc::new(CornellBox::new(
+                    Vec3A::new(0.0, 0.0, 0.0),
+                    Vec3A::new(165.0, 165.0, 165.0),
+                    white.clone(),
+                )),
+                -18.0,
+            )),
+            Vec3A::new(130.0, 0.0, 65.0),
         )),
-        //         -18.0,
-        //     )),
-        //     Vec3A::new(130.0, 0.0, 65.0),
-        // )),
-        // Rc::new(Translate::new(
-        //     Rc::new(RotateY::new(
-        Rc::new(CornellBox::new(
-            Vec3A::new(0.0, 0.0, 0.0),
-            Vec3A::new(165.0, 330.0, 165.0),
-            white.clone(),
+        Rc::new(Translate::new(
+            Rc::new(RotateY::new(
+                Rc::new(CornellBox::new(
+                    Vec3A::new(0.0, 0.0, 0.0),
+                    Vec3A::new(165.0, 330.0, 165.0),
+                    white.clone(),
+                )),
+                15.0,
+            )),
+            Vec3A::new(265.0, 0.0, 295.0),
         )),
-        //         15.0,
-        //     )),
-        //     Vec3A::new(265.0, 0.0, 295.0),
-        // )),
+        Rc::new(room),
+    ])
+}
+
+fn rotate_cloudy_box() -> HittableList {
+    let room = empty_box();
+    let white = Rc::new(Lambertian::new(Rc::new(Solid::new(Vec3A::new(
+        0.73, 0.73, 0.73,
+    )))));
+    HittableList::new(vec![
+        Rc::new(ConstantMedium::new_from_density(
+            Rc::new(Translate::new(
+                Rc::new(RotateY::new(
+                    Rc::new(CornellBox::new(
+                        Vec3A::new(0.0, 0.0, 0.0),
+                        Vec3A::new(165.0, 165.0, 165.0),
+                        white.clone(),
+                    )),
+                    -18.0,
+                )),
+                Vec3A::new(130.0, 0.0, 65.0),
+            )),
+            0.01,
+            Vec3A::ZERO,
+        )),
+        Rc::new(ConstantMedium::new_from_density(
+            Rc::new(Translate::new(
+                Rc::new(RotateY::new(
+                    Rc::new(CornellBox::new(
+                        Vec3A::new(0.0, 0.0, 0.0),
+                        Vec3A::new(165.0, 330.0, 165.0),
+                        white.clone(),
+                    )),
+                    15.0,
+                )),
+                Vec3A::new(265.0, 0.0, 295.0),
+            )),
+            0.01,
+            Vec3A::ZERO,
+        )),
         Rc::new(room),
     ])
 }
@@ -187,7 +228,7 @@ pub fn write_image(path: String) -> TracerResult<()> {
     let samples = 100;
     let max_depth = 10;
 
-    let world = two_boxes();
+    let world = rotate_cloudy_box();
 
     let mut output = File::create(path)?;
     writeln!(&mut output, "P3\n{} {}\n255", image_width, image_height)?;
