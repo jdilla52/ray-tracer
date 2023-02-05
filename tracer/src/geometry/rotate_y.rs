@@ -1,9 +1,9 @@
 use crate::geometry::aabb::Aabb;
+use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::geometry::Hittable;
 
 pub struct RotateY {
     pub object: Rc<dyn Hittable>,

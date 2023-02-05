@@ -1,11 +1,11 @@
 use crate::error::TracerError::BvhBoundingBoxError;
 use crate::error::TracerResult;
 use crate::geometry::aabb::Aabb;
+use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use std::cmp::Ordering;
 use std::rc::Rc;
-use crate::geometry::Hittable;
 
 pub struct BvhNode {
     pub left: Rc<dyn Hittable>,

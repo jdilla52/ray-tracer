@@ -1,13 +1,13 @@
 use crate::geometry::aabb::Aabb;
+use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
-use crate::material::Material;
 use crate::intersection::ray::Ray;
+use crate::material::Material;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::geometry::Hittable;
 
 pub struct YzRect {
-    mp: Rc<dyn Material>,
+    material_index: usize,
     y0: f32,
     y1: f32,
     z0: f32,
@@ -16,9 +16,9 @@ pub struct YzRect {
 }
 
 impl YzRect {
-    pub fn new(y0: f32, y1: f32, z0: f32, z1: f32, k: f32, mp: Rc<dyn Material>) -> Self {
+    pub fn new(y0: f32, y1: f32, z0: f32, z1: f32, k: f32, material_index: usize) -> Self {
         Self {
-            mp,
+            material_index,
             y0,
             y1,
             z0,
@@ -45,7 +45,7 @@ impl Hittable for YzRect {
             t,
             r,
             Vec3A::new(1.0, 0.0, 0.0),
-            self.mp.clone(),
+            self.material_index.clone(),
             (y - self.y0) / (self.y1 - self.y0),
             (z - self.z0) / (self.z1 - self.z0),
         ))

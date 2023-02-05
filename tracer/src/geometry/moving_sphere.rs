@@ -1,31 +1,26 @@
 use crate::geometry::aabb::Aabb;
-use crate::intersection::hit_record::HitRecord;
 use crate::geometry::sphere::get_sphere_uv;
-use crate::material::Material;
+use crate::geometry::Hittable;
+use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
+use crate::material::Material;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::geometry::Hittable;
 
 pub struct MovingSphere {
     pub center0: Vec3A,
     pub center1: Vec3A,
     pub radius: f32,
-    pub material: Rc<dyn Material>,
+    pub material_index: usize,
 }
 
 impl MovingSphere {
-    pub fn new(
-        center0: Vec3A,
-        center1: Vec3A,
-        radius: f32,
-        material: Rc<dyn Material>,
-    ) -> MovingSphere {
+    pub fn new(center0: Vec3A, center1: Vec3A, radius: f32, material_index: usize) -> MovingSphere {
         MovingSphere {
             center0,
             center1,
             radius,
-            material,
+            material_index,
         }
     }
 
@@ -79,7 +74,7 @@ impl Hittable for MovingSphere {
                 position,
                 normal: outward_normal,
                 front_face: true,
-                material: self.material.clone(),
+                material_index: self.material_index,
                 u,
                 v,
             })
@@ -91,7 +86,7 @@ impl Hittable for MovingSphere {
                 position,
                 normal: outward_normal,
                 front_face: false,
-                material: self.material.clone(),
+                material_index: self.material_index,
                 u,
                 v,
             })

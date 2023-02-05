@@ -4,16 +4,15 @@ pub mod noise;
 pub mod perlin;
 pub mod solid;
 
-use glam::Vec3A;
 use crate::texture::checker::Checker;
 use crate::texture::image::Image;
 use crate::texture::noise::Noise;
 use crate::texture::solid::Solid;
+use glam::Vec3A;
 
 pub trait Texture {
     fn value(&self, u: f32, v: f32, p: Vec3A) -> Vec3A;
 }
-
 
 pub enum Textures {
     Checker(Checker),

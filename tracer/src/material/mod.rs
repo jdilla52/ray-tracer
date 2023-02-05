@@ -6,12 +6,12 @@ pub mod metal;
 
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
-use glam::Vec3A;
 use crate::material::dieletric::Dieletric;
 use crate::material::diffuse_light::DiffuseLight;
 use crate::material::isotropic::Isotropic;
 use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
+use glam::Vec3A;
 
 pub struct ScatterRecord {
     pub attenuation: Vec3A,
@@ -39,8 +39,7 @@ pub trait Material {
     }
 }
 
-
-pub enum Materials{
+pub enum Materials {
     Lambertian(Lambertian),
     Metal(Metal),
     Dieletric(Dieletric),

@@ -1,14 +1,14 @@
+use crate::intersection::ray::Ray;
+use crate::material::Material;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::material::Material;
-use crate::intersection::ray::Ray;
 
 pub struct HitRecord {
     pub root: f32,
     pub position: Vec3A,
     pub normal: Vec3A,
     pub front_face: bool,
-    pub material: Rc<dyn Material>,
+    pub material_index: usize,
     pub u: f32,
     pub v: f32,
 }
@@ -18,7 +18,7 @@ impl HitRecord {
         root: f32,
         ray: &Ray,
         outward_normal: Vec3A,
-        material: Rc<dyn Material>,
+        material_index: usize,
         u: f32,
         v: f32,
     ) -> Self {
@@ -34,9 +34,9 @@ impl HitRecord {
             position,
             normal,
             front_face,
-            material,
             u,
             v,
+            material_index,
         }
     }
     pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Vec3A) {

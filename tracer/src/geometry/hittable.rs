@@ -1,17 +1,17 @@
 use crate::geometry::aabb::Aabb;
-use crate::material::Material;
+use crate::geometry::{Geometry, Hittable};
+use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
+use crate::material::Material;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::geometry::Hittable;
-use crate::intersection::hit_record::HitRecord;
 
 pub struct HittableList {
-    pub objects: Vec<Rc<dyn Hittable>>,
+    pub objects: Vec<Geometry>,
 }
 
 impl HittableList {
-    pub fn new(objects: Vec<Rc<dyn Hittable>>) -> Self {
+    pub fn new(objects: Vec<Geometry>) -> Self {
         HittableList { objects }
     }
 }

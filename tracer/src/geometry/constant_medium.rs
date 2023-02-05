@@ -1,35 +1,35 @@
 use crate::geometry::aabb::Aabb;
+use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
+use crate::intersection::ray::Ray;
 use crate::material::isotropic::Isotropic;
 use crate::material::Material;
-use crate::intersection::ray::Ray;
 use glam::Vec3A;
 use log::debug;
 use std::rc::Rc;
-use crate::geometry::Hittable;
 
 pub struct ConstantMedium {
     pub boundary: Rc<dyn Hittable>,
-    pub phase_function: Rc<dyn Material>,
+    pub phase_function: usize,
     pub neg_inv_density: f32,
 }
 
 impl ConstantMedium {
-    pub fn new(b: Rc<dyn Hittable>, d: f32, a: Rc<dyn Material>) -> Self {
+    pub fn new(b: Rc<dyn Hittable>, d: f32, phase_function: usize) -> Self {
         Self {
             boundary: b,
             neg_inv_density: -1.0 / d,
-            phase_function: a,
+            phase_function,
         }
     }
 
-    pub fn new_from_density(b: Rc<dyn Hittable>, d: f32, c: Vec3A) -> Self {
-        Self {
-            boundary: b,
-            neg_inv_density: -1.0 / d,
-            phase_function: Rc::new(Isotropic::new_color(c)),
-        }
-    }
+    // pub fn new_from_density(b: Rc<dyn Hittable>, d: f32, c: Vec3A) -> Self {
+    //     Self {
+    //         boundary: b,
+    //         neg_inv_density: -1.0 / d,
+    //         phase_function: Rc::new(Isotropic::new_color(c)),
+    //     }
+    // }
 }
 
 // only works for convex shapes
@@ -68,7 +68,7 @@ impl Hittable for ConstantMedium {
                     position: r.at(t),
                     normal: Default::default(),
                     front_face: true,
-                    material: self.phase_function.clone(),
+                    material_index: self.phase_function,
                     u: 0.0,
                     v: 0.0,
                 })

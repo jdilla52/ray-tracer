@@ -3,12 +3,11 @@ use crate::geometry::hittable::HittableList;
 use crate::geometry::xy_rect::XyRect;
 use crate::geometry::xz_rect::XzRect;
 use crate::geometry::yz_rect::YzRect;
-use crate::material::Material;
+use crate::geometry::{Geometry, Hittable};
+use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::geometry::Hittable;
-use crate::intersection::hit_record::HitRecord;
 
 pub struct CornellBox {
     pub min: Vec3A,
@@ -17,14 +16,56 @@ pub struct CornellBox {
 }
 
 impl CornellBox {
-    pub fn new(p0: Vec3A, p1: Vec3A, material: Rc<dyn Material>) -> Self {
+    pub fn new(p0: Vec3A, p1: Vec3A, material_index: usize) -> Self {
         let sides = HittableList::new(vec![
-            Rc::new(XyRect::new(p0.x, p1.x, p0.y, p1.y, p1.z, material.clone())),
-            Rc::new(XyRect::new(p0.x, p1.x, p0.y, p1.y, p0.z, material.clone())),
-            Rc::new(XzRect::new(p0.x, p1.x, p0.z, p1.z, p1.y, material.clone())),
-            Rc::new(XzRect::new(p0.x, p1.x, p0.z, p1.z, p0.y, material.clone())),
-            Rc::new(YzRect::new(p0.y, p1.y, p0.z, p1.z, p1.x, material.clone())),
-            Rc::new(YzRect::new(p0.y, p1.y, p0.z, p1.z, p0.x, material.clone())),
+            Geometry::XyRect(XyRect::new(
+                p0.x,
+                p1.x,
+                p0.y,
+                p1.y,
+                p1.z,
+                material_index.clone(),
+            )),
+            Geometry::XyRect(XyRect::new(
+                p0.x,
+                p1.x,
+                p0.y,
+                p1.y,
+                p0.z,
+                material_index.clone(),
+            )),
+            Geometry::XzRect(XzRect::new(
+                p0.x,
+                p1.x,
+                p0.z,
+                p1.z,
+                p1.y,
+                material_index.clone(),
+            )),
+            Geometry::XzRect(XzRect::new(
+                p0.x,
+                p1.x,
+                p0.z,
+                p1.z,
+                p0.y,
+                material_index.clone(),
+            )),
+            Geometry::YzRect(YzRect::new(
+                p0.y,
+                p1.y,
+                p0.z,
+                p1.z,
+                p1.x,
+                material_index.clone(),
+            )),
+            Geometry::YzRect(YzRect::new(
+                p0.y,
+                p1.y,
+                p0.z,
+                p1.z,
+                p0.x,
+                material_index.clone(),
+            )),
         ]);
 
         Self {

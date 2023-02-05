@@ -1,15 +1,15 @@
 use crate::geometry::aabb::Aabb;
+use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
-use crate::material::Material;
 use crate::intersection::ray::Ray;
+use crate::material::Material;
 use glam::Vec3A;
 use std::rc::Rc;
-use crate::geometry::Hittable;
 
 pub struct Sphere {
     pub center: Vec3A,
     pub radius: f32,
-    pub material: Rc<dyn Material>,
+    pub material_index: usize,
 }
 
 pub struct Square {
@@ -41,11 +41,11 @@ pub fn get_sphere_uv(p: Vec3A) -> (f32, f32) {
 static TWO_PI: f32 = std::f32::consts::PI * 2.0;
 
 impl Sphere {
-    pub fn new(center: Vec3A, radius: f32, material: Rc<dyn Material>) -> Sphere {
+    pub fn new(center: Vec3A, radius: f32, material_index: usize) -> Sphere {
         Sphere {
             center,
             radius,
-            material,
+            material_index,
         }
     }
 }
@@ -89,7 +89,7 @@ impl Hittable for Sphere {
                 position,
                 normal: outward_normal,
                 front_face: true,
-                material: self.material.clone(),
+                material_index: self.material_index,
                 u,
                 v,
             })
@@ -101,7 +101,7 @@ impl Hittable for Sphere {
                 position,
                 normal: -outward_normal,
                 front_face: false,
-                material: self.material.clone(),
+                material_index: self.material_index,
                 u,
                 v,
             })

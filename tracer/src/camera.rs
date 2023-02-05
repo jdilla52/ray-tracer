@@ -2,6 +2,7 @@ use crate::intersection::ray::Ray;
 use crate::vec3;
 use glam::Vec3A;
 
+#[derive(Debug, Clone)]
 pub struct Camera {
     pub horizontal: Vec3A,
     pub origin: Vec3A,

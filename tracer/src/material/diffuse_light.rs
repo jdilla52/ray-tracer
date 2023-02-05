@@ -1,6 +1,6 @@
 use crate::intersection::hit_record::HitRecord;
-use crate::material::{Material, ScatterRecord};
 use crate::intersection::ray::Ray;
+use crate::material::{Material, ScatterRecord};
 use crate::texture::solid::Solid;
 use crate::texture::Texture;
 use glam::Vec3A;
