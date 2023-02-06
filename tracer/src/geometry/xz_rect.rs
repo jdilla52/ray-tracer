@@ -45,7 +45,7 @@ impl Hittable for XzRect {
             t,
             r,
             Vec3A::new(0.0, 1.0, 0.0),
-            self.material_index.clone(),
+            self.material_index,
             (x - self.x0) / (self.x1 - self.x0),
             (z - self.z0) / (self.z1 - self.z0),
         ))

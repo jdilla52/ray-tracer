@@ -29,6 +29,7 @@ use crate::texture::checker::Checker;
 use crate::texture::image::Image;
 use crate::texture::noise::Noise;
 use crate::texture::solid::Solid;
+use crate::texture::Textures;
 use error::TracerResult;
 use geometry::Hittable;
 use glam::Vec3A;
@@ -200,17 +201,18 @@ use std::rc::Rc;
 //     ])
 // }
 
-fn earth() -> (Vec<Materials>, HittableList) {
-    let materials = vec![Materials::Lambertian(Lambertian::new(Rc::new(
+fn earth() -> (Vec<Materials>, Vec<Textures>, HittableList) {
+    let textures = vec![Textures::Image(
         Image::new("./assets/earthmap.jpg").unwrap(),
-    )))];
+    )];
+    let materials = vec![Materials::Lambertian(Lambertian::new(0))];
     let geo = HittableList::new(vec![Geometry::Sphere(Sphere::new(
         Vec3A::new(0.0, 0.0, 0.0),
         2.0,
         0,
     ))]);
 
-    (materials, geo)
+    (materials, textures, geo)
 }
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
@@ -237,11 +239,11 @@ pub fn write_image(path: String) -> TracerResult<()> {
     let samples = 100;
     let max_depth = 10;
 
-    let (mat, geo) = earth();
+    let (mat, texture, geo) = earth();
 
     let renderer = Renderer::new(
         mat,
-        vec![],
+        texture,
         geo,
         camera.clone(),
         RenderSettings {

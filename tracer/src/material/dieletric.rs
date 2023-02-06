@@ -8,12 +8,15 @@ use std::rc::Rc;
 
 pub struct Dieletric {
     pub ref_idx: f32,
-    pub texture: Rc<dyn Texture>,
+    pub texture_index: usize,
 }
 
 impl Dieletric {
-    pub fn new(ref_idx: f32, texture: Rc<dyn Texture>) -> Self {
-        Dieletric { ref_idx, texture }
+    pub fn new(ref_idx: f32, texture_index: usize) -> Self {
+        Dieletric {
+            ref_idx,
+            texture_index,
+        }
     }
     fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
         // Use Schlick's approximation for reflectance.
@@ -48,12 +51,8 @@ impl Material for Dieletric {
         };
 
         Some(ScatterRecord {
-            attenuation: self.texture.value(rec.u, rec.v, rec.position),
+            texture_index: self.texture_index,
             scattered: Ray::new(rec.position, direction, r_in.time),
         })
-    }
-
-    fn color(&self, u: f32, v: f32) -> Vec3A {
-        Vec3A::ZERO
     }
 }

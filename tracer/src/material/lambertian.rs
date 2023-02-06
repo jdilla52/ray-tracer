@@ -8,12 +8,12 @@ use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Lambertian {
-    pub albedo: Rc<dyn Texture>,
+    pub texture_index: usize,
 }
 
 impl Lambertian {
-    pub fn new(albedo: Rc<dyn Texture>) -> Self {
-        Lambertian { albedo }
+    pub fn new(texture_index: usize) -> Self {
+        Lambertian { texture_index }
     }
 }
 
@@ -29,12 +29,8 @@ impl Material for Lambertian {
         };
 
         Some(ScatterRecord {
-            attenuation: self.albedo.value(rec.u, rec.v, rec.position),
+            texture_index: self.texture_index,
             scattered: Ray::new(rec.position, scatter_direction, r_in.time),
         })
-    }
-
-    fn color(&self, u: f32, v: f32) -> Vec3A {
-        self.albedo.value(u, v, Vec3A::ZERO)
     }
 }

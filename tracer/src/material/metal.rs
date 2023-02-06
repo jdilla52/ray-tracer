@@ -8,13 +8,16 @@ use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Metal {
-    pub albedo: Rc<dyn Texture>,
+    pub texture_index: usize,
     pub fuzz: f32,
 }
 
 impl Metal {
-    pub fn new(albedo: Rc<dyn Texture>, fuzz: f32) -> Self {
-        Metal { albedo, fuzz }
+    pub fn new(texture_index: usize, fuzz: f32) -> Self {
+        Metal {
+            texture_index,
+            fuzz,
+        }
     }
 }
 
@@ -25,15 +28,11 @@ impl Material for Metal {
 
         if fuzzed_direction.dot(rec.normal) > 0.0 {
             Some(ScatterRecord {
-                attenuation: self.albedo.value(rec.u, rec.v, rec.position),
+                texture_index: self.texture_index,
                 scattered: Ray::new(rec.position, fuzzed_direction, r_in.time),
             })
         } else {
             None
         }
-    }
-
-    fn color(&self, u: f32, v: f32) -> Vec3A {
-        self.albedo.value(u, v, Vec3A::ZERO)
     }
 }

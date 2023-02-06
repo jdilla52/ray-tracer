@@ -45,7 +45,7 @@ impl Hittable for YzRect {
             t,
             r,
             Vec3A::new(1.0, 0.0, 0.0),
-            self.material_index.clone(),
+            self.material_index,
             (y - self.y0) / (self.y1 - self.y0),
             (z - self.z0) / (self.z1 - self.z0),
         ))

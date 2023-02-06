@@ -14,14 +14,14 @@ use crate::material::metal::Metal;
 use glam::Vec3A;
 
 pub struct ScatterRecord {
-    pub attenuation: Vec3A,
+    pub texture_index: usize,
     pub scattered: Ray,
 }
 
 impl ScatterRecord {
-    pub fn new(scattered: Ray, attenuation: Vec3A) -> Self {
+    pub fn new(scattered: Ray, texture_index: usize) -> Self {
         Self {
-            attenuation,
+            texture_index,
             scattered,
         }
     }
@@ -34,8 +34,8 @@ pub trait Material {
     fn color(&self, u: f32, v: f32) -> Vec3A {
         Vec3A::ZERO
     }
-    fn emitted(&self, u: f32, v: f32, p: Vec3A) -> Vec3A {
-        Vec3A::ZERO
+    fn emitted(&self) -> Option<usize> {
+        None
     }
 }
 
@@ -66,13 +66,13 @@ impl Material for Materials {
             Materials::DiffuseLight(d) => d.color(u, v),
         }
     }
-    fn emitted(&self, u: f32, v: f32, p: Vec3A) -> Vec3A {
+    fn emitted(&self) -> Option<usize> {
         match self {
-            Materials::Lambertian(l) => l.emitted(u, v, p),
-            Materials::Metal(m) => m.emitted(u, v, p),
-            Materials::Dieletric(d) => d.emitted(u, v, p),
-            Materials::Isotropic(i) => i.emitted(u, v, p),
-            Materials::DiffuseLight(d) => d.emitted(u, v, p),
+            Materials::Lambertian(l) => l.emitted(),
+            Materials::Metal(m) => m.emitted(),
+            Materials::Dieletric(d) => d.emitted(),
+            Materials::Isotropic(i) => i.emitted(),
+            Materials::DiffuseLight(d) => d.emitted(),
         }
     }
 }

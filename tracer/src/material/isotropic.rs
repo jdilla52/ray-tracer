@@ -8,17 +8,12 @@ use glam::Vec3A;
 use std::rc::Rc;
 
 pub struct Isotropic {
-    pub albedo: Rc<dyn Texture>,
+    pub texture_index: usize,
 }
 
 impl Isotropic {
-    pub fn new(albedo: Rc<dyn Texture>) -> Self {
-        Self { albedo }
-    }
-    pub fn new_color(albedo: Vec3A) -> Self {
-        Self {
-            albedo: Rc::new(Solid::new(albedo)),
-        }
+    pub fn new(texture_index: usize) -> Self {
+        Self { texture_index }
     }
 }
 
@@ -26,10 +21,7 @@ impl Material for Isotropic {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
         Some(ScatterRecord::new(
             Ray::new(rec.position, random_in_unit_sphere(), r_in.time),
-            self.albedo.value(rec.u, rec.v, rec.position),
+            self.texture_index,
         ))
-    }
-    fn color(&self, u: f32, v: f32) -> Vec3A {
-        self.albedo.value(u, v, Vec3A::ZERO)
     }
 }

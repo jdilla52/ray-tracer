@@ -122,9 +122,14 @@ impl Renderer {
     pub fn ray_color(&self, ray: &Ray, depth: i32) -> Vec3A {
         if let Some(t) = self.geometry.hit(ray, 0.001, f32::INFINITY) {
             let material = &self.materials[t.material_index as usize];
-            let emitted = material.emitted(t.u, t.v, t.position);
+            let emitted = if let Some(id) = material.emitted() {
+                self.textures[id].value(t.u, t.v, t.position)
+            } else {
+                Vec3A::ZERO
+            };
             if let Some(r) = material.scatter(ray, &t) {
-                emitted + r.attenuation * self.ray_color(&r.scattered, depth - 1)
+                let attenuation = self.textures[r.texture_index].value(t.u, t.v, t.position);
+                emitted + attenuation * self.ray_color(&r.scattered, depth - 1)
             } else {
                 emitted
             }
