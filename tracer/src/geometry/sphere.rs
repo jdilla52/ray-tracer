@@ -2,9 +2,8 @@ use crate::geometry::aabb::Aabb;
 use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
-use crate::material::Material;
+
 use glam::Vec3A;
-use std::rc::Rc;
 
 pub struct Sphere {
     pub center: Vec3A,
@@ -24,10 +23,10 @@ impl Square {
 }
 
 impl Hittable for Square {
-    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+    fn hit(&self, _r: &Ray, _t_min: f32, _t_max: f32) -> Option<HitRecord> {
         None
     }
-    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+    fn bounding_box(&self, _t0: f32, _t1: f32) -> Option<Aabb> {
         None
     }
 }
@@ -51,7 +50,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+    fn bounding_box(&self, _t0: f32, _t1: f32) -> Option<Aabb> {
         Some(Aabb::new(
             self.center - Vec3A::splat(self.radius),
             self.center + Vec3A::splat(self.radius),

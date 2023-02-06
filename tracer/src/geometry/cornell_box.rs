@@ -7,7 +7,7 @@ use crate::geometry::{Geometry, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
-use std::rc::Rc;
+
 
 pub struct CornellBox {
     pub min: Vec3A,
@@ -81,7 +81,7 @@ impl Hittable for CornellBox {
         self.sides.hit(r, t_min, t_max)
     }
 
-    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+    fn bounding_box(&self, _t0: f32, _t1: f32) -> Option<Aabb> {
         Some(Aabb::new(self.min, self.max))
     }
 }

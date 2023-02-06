@@ -1,11 +1,11 @@
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
-use std::cmp::min;
+
 
 #[derive(Clone, Copy)]
 pub struct Aabb {
-    pub(crate) min: Vec3A,
-    pub(crate) max: Vec3A,
+    pub min: Vec3A,
+    pub max: Vec3A,
 }
 
 impl Aabb {
@@ -42,8 +42,8 @@ impl Aabb {
     pub fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> bool {
         for a in 0..3 {
             let inv_d = 1.0 / ray.direction[a];
-            let mut t0 = (self.min[a] - ray.origin[a]) * inv_d;
-            let mut t1 = (self.max[a] - ray.origin[a]) * inv_d;
+            let t0 = (self.min[a] - ray.origin[a]) * inv_d;
+            let t1 = (self.max[a] - ray.origin[a]) * inv_d;
 
             // isn't it's faster to branch here than memswap
             // if (invD < 0.0f)

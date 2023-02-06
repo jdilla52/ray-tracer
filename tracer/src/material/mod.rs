@@ -13,6 +13,9 @@ use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
 use glam::Vec3A;
 
+
+use serde::{Deserialize, Serialize};
+
 pub struct ScatterRecord {
     pub texture_index: usize,
     pub scattered: Ray,
@@ -31,7 +34,7 @@ impl ScatterRecord {
 // starting to doubt if using pointers to trait objects is the best approach
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
-    fn color(&self, u: f32, v: f32) -> Vec3A {
+    fn color(&self, _u: f32, _v: f32) -> Vec3A {
         Vec3A::ZERO
     }
     fn emitted(&self) -> Option<usize> {
@@ -39,6 +42,8 @@ pub trait Material {
     }
 }
 
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum Materials {
     Lambertian(Lambertian),
     Metal(Metal),

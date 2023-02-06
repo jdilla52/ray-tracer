@@ -2,9 +2,9 @@ use crate::geometry::aabb::Aabb;
 use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
-use crate::material::Material;
+
 use glam::Vec3A;
-use std::rc::Rc;
+
 
 pub struct YzRect {
     material_index: usize,
@@ -51,7 +51,7 @@ impl Hittable for YzRect {
         ))
     }
 
-    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+    fn bounding_box(&self, _t0: f32, _t1: f32) -> Option<Aabb> {
         Some(Aabb::new(
             Vec3A::new(self.y0, self.z0, self.k - 0.0001),
             Vec3A::new(self.y1, self.z1, self.k + 0.0001),

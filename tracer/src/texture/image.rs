@@ -1,9 +1,24 @@
-use crate::error::TracerResult;
-use crate::texture::Texture;
+use crate::error::{TracerError, TracerResult};
+use crate::texture::{Texture, Textures};
 use glam::Vec3A;
 use image;
 use image::io::Reader;
-use image::{DynamicImage, GenericImageView, Pixel};
+use image::{DynamicImage, GenericImageView};
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ImageBuilder {
+    path: String,
+}
+
+impl TryInto<Textures> for ImageBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Textures> {
+        Ok(Textures::Image(Image::new(&self.path)?))
+    }
+}
 
 pub struct Image {
     pub image: DynamicImage,
@@ -28,7 +43,7 @@ impl Image {
 }
 
 impl Texture for Image {
-    fn value(&self, u: f32, v: f32, p: Vec3A) -> Vec3A {
+    fn value(&self, u: f32, v: f32, _p: Vec3A) -> Vec3A {
         let uu = u.clamp(0.0, 1.0);
         let vv = (-1.0 * v).clamp(0.0, 1.0);
         let i = (uu * self.width as f32) as u32;

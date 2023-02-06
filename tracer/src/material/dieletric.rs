@@ -1,11 +1,13 @@
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::{Material, ScatterRecord};
-use crate::texture::Texture;
-use crate::vec3;
-use glam::Vec3A;
-use std::rc::Rc;
 
+use crate::vec3;
+
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Dieletric {
     pub ref_idx: f32,
     pub texture_index: usize,

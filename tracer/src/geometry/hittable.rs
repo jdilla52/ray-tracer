@@ -2,9 +2,9 @@ use crate::geometry::aabb::Aabb;
 use crate::geometry::{Geometry, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
-use crate::material::Material;
-use glam::Vec3A;
-use std::rc::Rc;
+
+
+
 
 pub struct HittableList {
     pub objects: Vec<Geometry>,

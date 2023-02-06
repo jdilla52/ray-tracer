@@ -3,9 +3,9 @@ use crate::geometry::sphere::get_sphere_uv;
 use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
-use crate::material::Material;
+
 use glam::Vec3A;
-use std::rc::Rc;
+
 
 pub struct MovingSphere {
     pub center0: Vec3A,

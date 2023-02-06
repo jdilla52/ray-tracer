@@ -1,11 +1,13 @@
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::{Material, ScatterRecord};
-use crate::texture::solid::Solid;
-use crate::texture::Texture;
-use glam::Vec3A;
-use std::rc::Rc;
 
+
+
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct DiffuseLight {
     texture_index: usize,
 }
@@ -17,7 +19,7 @@ impl DiffuseLight {
 }
 
 impl Material for DiffuseLight {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+    fn scatter(&self, _r_in: &Ray, _rec: &HitRecord) -> Option<ScatterRecord> {
         None
     }
 

@@ -1,6 +1,9 @@
 use crate::texture::Texture;
 use glam::Vec3A;
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Solid {
     pub color_value: Vec3A,
 }
@@ -18,7 +21,7 @@ impl Solid {
 }
 
 impl Texture for Solid {
-    fn value(&self, u: f32, v: f32, p: Vec3A) -> Vec3A {
+    fn value(&self, _u: f32, _v: f32, _p: Vec3A) -> Vec3A {
         self.color_value
     }
 }

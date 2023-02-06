@@ -7,8 +7,10 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.68"
-glam = { version = "0.22.0", features = ["rand", "approx"] }
+glam = { version = "0.22.0", features = ["rand", "approx", "serde"] }
 image = "0.24"
 log = "0.4.17"
 rand = "0.8.5"
+serde = { version = "1.0.130", features = ["derive"] }
+typetag = "0.2.5"
 thiserror = "1.0.38"

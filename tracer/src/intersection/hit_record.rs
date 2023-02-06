@@ -1,7 +1,7 @@
 use crate::intersection::ray::Ray;
-use crate::material::Material;
+
 use glam::Vec3A;
-use std::rc::Rc;
+
 
 pub struct HitRecord {
     pub root: f32,

@@ -2,24 +2,23 @@ use crate::geometry::aabb::Aabb;
 use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
-use crate::material::isotropic::Isotropic;
-use crate::material::Material;
-use glam::Vec3A;
+
+
+
 use log::debug;
-use std::rc::Rc;
 
 pub struct ConstantMedium {
-    pub boundary: Rc<dyn Hittable>,
-    pub phase_function: usize,
+    pub boundary: Box<dyn Hittable>,
+    pub material_index: usize,
     pub neg_inv_density: f32,
 }
 
 impl ConstantMedium {
-    pub fn new(b: Rc<dyn Hittable>, d: f32, phase_function: usize) -> Self {
+    pub fn new(b: Box<dyn Hittable>, d: f32, material_index: usize) -> Self {
         Self {
             boundary: b,
             neg_inv_density: -1.0 / d,
-            phase_function,
+            material_index,
         }
     }
 
@@ -68,7 +67,7 @@ impl Hittable for ConstantMedium {
                     position: r.at(t),
                     normal: Default::default(),
                     front_face: true,
-                    material_index: self.phase_function,
+                    material_index: self.material_index,
                     u: 0.0,
                     v: 0.0,
                 })

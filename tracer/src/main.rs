@@ -7,36 +7,35 @@ mod renderer;
 mod texture;
 mod vec3;
 
-use crate::geometry::bvh::BvhNode;
-use crate::geometry::constant_medium::ConstantMedium;
-use crate::geometry::cornell_box::CornellBox;
+
+
+
 use crate::geometry::hittable::HittableList;
-use crate::geometry::rotate_y::RotateY;
+
 use crate::geometry::sphere::Sphere;
-use crate::geometry::translate::Translate;
-use crate::geometry::xy_rect::XyRect;
-use crate::geometry::xz_rect::XzRect;
-use crate::geometry::yz_rect::YzRect;
+
+
+
+
 use crate::geometry::Geometry;
-use crate::intersection::ray::Ray;
-use crate::material::dieletric::Dieletric;
-use crate::material::diffuse_light::DiffuseLight;
+
+
+
 use crate::material::lambertian::Lambertian;
-use crate::material::metal::Metal;
-use crate::material::{Material, Materials};
+
+use crate::material::{Materials};
 use crate::renderer::{RenderSettings, Renderer};
-use crate::texture::checker::Checker;
+
 use crate::texture::image::Image;
-use crate::texture::noise::Noise;
-use crate::texture::solid::Solid;
+
+
 use crate::texture::Textures;
 use error::TracerResult;
-use geometry::Hittable;
+
 use glam::Vec3A;
-use image::RgbImage;
-use std::fs::File;
-use std::io::Write;
-use std::rc::Rc;
+
+
+
 
 //
 // fn simple_light() -> HittableList {
@@ -217,7 +216,6 @@ fn earth() -> (Vec<Materials>, Vec<Textures>, HittableList) {
 pub fn write_image(path: String) -> TracerResult<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
-    let image_height = (image_width as f32 / aspect_ratio) as i32;
     let look_from = Vec3A::new(13., 2., 3.);
     let look_at = Vec3A::new(0., 0., 0.);
     let vup = Vec3A::new(0., 1., 0.);

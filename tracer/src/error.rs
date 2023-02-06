@@ -1,3 +1,4 @@
+use std::convert::Infallible;
 use thiserror::Error;
 
 pub type TracerResult<T> = std::result::Result<T, TracerError>;
@@ -12,4 +13,7 @@ pub enum TracerError {
 
     #[error("null bound box error")]
     BvhBoundingBoxError,
+
+    #[error("null bound box error")]
+    Infallible(#[from] Infallible),
 }

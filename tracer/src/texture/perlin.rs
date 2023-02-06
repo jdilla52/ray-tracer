@@ -13,7 +13,7 @@ impl Perlin {
     pub fn new() -> Self {
         let mut ran = Vec::with_capacity(POINT_COUNT);
         let mut rng = rand::thread_rng();
-        for i in 0..256 {
+        for _ in 0..256 {
             ran.push(rng.gen::<Vec3A>().normalize());
         }
 

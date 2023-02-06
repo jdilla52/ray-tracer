@@ -1,6 +1,28 @@
 use crate::texture::perlin::Perlin;
-use crate::texture::Texture;
+use crate::texture::{Texture, Textures};
 use glam::Vec3A;
+
+use crate::error::{TracerError, TracerResult};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct NoiseBuilder {
+    scale: f32,
+}
+
+impl NoiseBuilder {
+    pub fn new(scale: f32) -> Self {
+        NoiseBuilder { scale }
+    }
+}
+
+impl TryInto<Textures> for NoiseBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Textures> {
+        Ok(Textures::Noise(Noise::new(self.scale)))
+    }
+}
 
 pub struct Noise {
     pub scale: f32,
@@ -17,7 +39,7 @@ impl Noise {
 }
 
 impl Texture for Noise {
-    fn value(&self, u: f32, v: f32, p: Vec3A) -> Vec3A {
+    fn value(&self, _u: f32, _v: f32, p: Vec3A) -> Vec3A {
         Vec3A::new(1.0, 1.0, 1.0)
             * 0.5
             * (1.0 + (self.scale * p.z + 10.0 * self.noise.turb(p, 7)).sin())

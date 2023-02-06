@@ -28,18 +28,18 @@ impl BvhNode {
         let object_span = list.len();
         let (left, right) = if object_span == 1 {
             //if there's just one object put it in both left and right
-            (list[0].clone(), list[0].clone())
+            (list[0].to_owned(), list[0].to_owned())
         } else if object_span == 2 {
             if compare_boxes(&list[0], &list[1], axis) {
-                (list[0].clone(), list[1].clone())
+                (list[0].clone(), list[1].to_owned())
             } else {
-                (list[1].clone(), list[0].clone())
+                (list[1].to_owned(), list[0].to_owned())
             }
         } else {
             list.sort_by(|a, b| sort_boxes(a, b, axis));
             let mid = object_span / 2;
-            let mut left_list = list[0..mid].to_vec();
-            let mut right_list = list[mid..].to_vec();
+            let left_list = list[0..mid].to_vec();
+            let right_list = list[mid..].to_vec();
             let left: Rc<dyn Hittable> = Rc::new(BvhNode::from_list(left_list, t0, t1)?);
             let right: Rc<dyn Hittable> = Rc::new(BvhNode::from_list(right_list, t0, t1)?);
             (left, right)
@@ -117,7 +117,7 @@ impl Hittable for BvhNode {
             (None, None) => None,
         }
     }
-    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
+    fn bounding_box(&self, _t0: f32, _t1: f32) -> Option<Aabb> {
         Some(self.bounding_box.clone())
     }
 }

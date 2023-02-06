@@ -1,12 +1,13 @@
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::{Material, ScatterRecord};
-use crate::texture::solid::Solid;
-use crate::texture::Texture;
-use crate::vec3::random_in_unit_sphere;
-use glam::Vec3A;
-use std::rc::Rc;
 
+
+use crate::vec3::random_in_unit_sphere;
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Isotropic {
     pub texture_index: usize,
 }
