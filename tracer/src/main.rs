@@ -7,24 +7,11 @@ mod renderer;
 mod texture;
 mod vec3;
 
-
 use std::fs;
-
-
-
-
-
-
-
 
 use crate::renderer::RenderBuilder;
 
-
-
-
 use error::TracerResult;
-
-
 
 //
 // fn simple_light() -> HittableList {

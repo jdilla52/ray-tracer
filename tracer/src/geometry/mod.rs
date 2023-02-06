@@ -1,6 +1,6 @@
 use crate::error::{TracerError, TracerResult};
 use crate::geometry::aabb::Aabb;
-use crate::geometry::bvh::{BvhNode, BvhNodeBuilder};
+// use crate::geometry::bvh::{BvhNode, BvhNodeBuilder};
 use crate::geometry::constant_medium::{ConstantMedium, ConstantMediumBuilder};
 use crate::geometry::cornell_box::{CornellBox, CornellBoxBuilder};
 use crate::geometry::hittable::{HittableList, HittableListBuilder};
@@ -17,7 +17,7 @@ use crate::intersection::ray::Ray;
 use std::rc::Rc;
 
 pub mod aabb;
-pub mod bvh;
+// pub mod bvh;
 pub mod constant_medium;
 pub mod cornell_box;
 pub mod hittable;
@@ -41,7 +41,7 @@ pub enum GeometryFile {
     Translate(TranslateBuilder),
     RotateY(RotateYBuilder),
     CornellBox(CornellBoxBuilder),
-    BvhNode(BvhNodeBuilder),
+    // BvhNode(BvhNodeBuilder),
     ConstantMedium(ConstantMediumBuilder),
     MovingSphere(MovingSphere),
     HittableList(HittableListBuilder),
@@ -62,7 +62,7 @@ impl TryInto<Geometry> for GeometryFile {
             GeometryFile::ConstantMedium(constant_medium) => Ok(constant_medium.try_into()?),
             GeometryFile::MovingSphere(moving_sphere) => Ok(Geometry::MovingSphere(moving_sphere)),
             GeometryFile::HittableList(hittable_list) => Ok(hittable_list.try_into()?),
-            GeometryFile::BvhNode(bvh_node) => Ok(bvh_node.try_into()?),
+            // GeometryFile::BvhNode(bvh_node) => Ok(bvh_node.try_into()?),
         }
     }
 }
@@ -86,7 +86,7 @@ impl TryInto<Box<Geometry>> for Box<GeometryFile> {
                 Ok(Box::new(Geometry::MovingSphere(moving_sphere)))
             }
             GeometryFile::HittableList(hittable_list) => Ok(Box::new(hittable_list.try_into()?)),
-            GeometryFile::BvhNode(bvh_node) => Ok(Box::new(bvh_node.try_into()?)),
+            // GeometryFile::BvhNode(bvh_node) => Ok(Box::new(bvh_node.try_into()?)),
         }
     }
 }
@@ -110,7 +110,7 @@ impl TryInto<Rc<Geometry>> for Box<GeometryFile> {
                 Ok(Rc::new(Geometry::MovingSphere(moving_sphere)))
             }
             GeometryFile::HittableList(hittable_list) => Ok(Rc::new(hittable_list.try_into()?)),
-            GeometryFile::BvhNode(bvh_node) => Ok(Rc::new(bvh_node.try_into()?)),
+            // GeometryFile::BvhNode(bvh_node) => Ok(Rc::new(bvh_node.try_into()?)),
         }
     }
 }
@@ -124,7 +124,7 @@ pub enum Geometry {
     RotateY(RotateY),
     CornellBox(CornellBox),
     ConstantMedium(ConstantMedium),
-    BvhNode(BvhNode),
+    // BvhNode(BvhNode),
     MovingSphere(MovingSphere),
     HittableList(HittableList),
 }
@@ -140,7 +140,7 @@ impl Hittable for Geometry {
             Geometry::RotateY(rotate_y) => rotate_y.hit(ray, t_min, t_max),
             Geometry::CornellBox(cornell_box) => cornell_box.hit(ray, t_min, t_max),
             Geometry::ConstantMedium(constant_medium) => constant_medium.hit(ray, t_min, t_max),
-            Geometry::BvhNode(bvh_node) => bvh_node.hit(ray, t_min, t_max),
+            // Geometry::BvhNode(bvh_node) => bvh_node.hit(ray, t_min, t_max),
             Geometry::MovingSphere(moving_sphere) => moving_sphere.hit(ray, t_min, t_max),
             Geometry::HittableList(hittable_list) => hittable_list.hit(ray, t_min, t_max),
         }
@@ -156,7 +156,7 @@ impl Hittable for Geometry {
             Geometry::RotateY(rotate_y) => rotate_y.bounding_box(t0, t1),
             Geometry::CornellBox(cornell_box) => cornell_box.bounding_box(t0, t1),
             Geometry::ConstantMedium(constant_medium) => constant_medium.bounding_box(t0, t1),
-            Geometry::BvhNode(bvh_node) => bvh_node.bounding_box(t0, t1),
+            // Geometry::BvhNode(bvh_node) => bvh_node.bounding_box(t0, t1),
             Geometry::MovingSphere(moving_sphere) => moving_sphere.bounding_box(t0, t1),
             Geometry::HittableList(hittable_list) => hittable_list.bounding_box(t0, t1),
         }
