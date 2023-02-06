@@ -39,7 +39,7 @@ pub struct CamerBuilder {
     pub aspect_ratio: f32,
     #[serde(default = "default_aperture")]
     pub aperture: f32,
-    pub focus_dist: f32,
+    pub focus_dist: Option<f32>,
     #[serde(default = "default_time0")]
     pub time0: f32,
     #[serde(default = "default_time1")]
@@ -54,7 +54,7 @@ impl CamerBuilder {
         vfov: f32,
         aspect_ratio: f32,
         aperture: f32,
-        focus_dist: f32,
+        focus_dist: Option<f32>,
         time0: f32,
         time1: f32,
     ) -> CamerBuilder {
@@ -71,6 +71,12 @@ impl CamerBuilder {
         }
     }
     pub fn build(&self) -> Camera {
+
+        let focus_dist = if let Some(v) = self.focus_dist {
+            v
+        } else {
+            (self.look_from - self.look_at).length()
+        };
         Camera::new(
             self.look_from,
             self.look_at,
@@ -78,7 +84,7 @@ impl CamerBuilder {
             self.vfov,
             self.aspect_ratio,
             self.aperture,
-            self.focus_dist,
+            focus_dist,
             self.time0,
             self.time1,
         )

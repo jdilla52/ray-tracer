@@ -143,6 +143,7 @@ impl Renderer {
         for _s in 0..self.settings.samples {
             let u = (x as f32 + rand::random::<f32>()) / (self.settings.image_width - 1) as f32;
             let v = (y as f32 + rand::random::<f32>()) / (height - 1) as f32;
+            let v = 1.0 - v; // flip height
             let ray = self.camera.get_ray(u, v);
             let rc = self.ray_color(&ray, self.settings.max_depth as i32);
             // let rc = renderer.ray_color(u, v);

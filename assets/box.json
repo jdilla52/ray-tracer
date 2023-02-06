@@ -1,0 +1,165 @@
+{
+  "settings": {
+    "image_width": 400,
+    "aspect_ratio": 1,
+    "samples": 100,
+    "max_depth": 1,
+    "path": "./output/test3.png"
+  },
+  "world": {
+    "objects": [
+      {
+        "YzRect": {
+         "y0": 0.0,
+          "y1": 550.0,
+          "z0": 0.0,
+          "z1": 550.0,
+          "k": 550.0,
+          "material_index": 0
+        }
+      },
+      {
+        "YzRect": {
+          "y0": 0.0,
+          "y1": 550.0,
+          "z0": 0.0,
+          "z1": 550.0,
+          "k": 0.0,
+          "material_index": 1
+        }
+      },
+      {
+        "XzRect": {
+          "x0": 113.0,
+          "x1": 443.0,
+          "z0": 127.0,
+          "z1": 432.0,
+          "k": 554.0,
+          "material_index": 4
+        }
+      },
+      {
+        "XzRect": {
+          "x0": 0.0,
+          "x1": 555.0,
+          "z0": 0.0,
+          "z1": 555.0,
+          "k": 0.0,
+          "material_index": 3
+        }
+      },
+      {
+        "XzRect": {
+          "x0": 0.0,
+          "x1": 555.0,
+          "z0": 0.0,
+          "z1": 555.0,
+          "k": 550.0,
+          "material_index": 3
+        }
+      },
+      {
+        "XyRect": {
+          "x0": 0.0,
+          "x1": 555.0,
+          "y0": 0.0,
+          "y1": 555.0,
+          "k": 0.0,
+          "material_index": 3
+        }
+      }
+    ]
+  },
+  "camera": {
+    "look_from": [
+      278.0,
+      278.0,
+      -800.0
+    ],
+    "look_at": [
+      278.0,
+      278.0,
+      0.0
+    ],
+    "vfov": 40.0,
+    "aspect_ratio": 1,
+    "aperture": 0.0,
+    "focus_dist": 800.0,
+    "time0": 0.0,
+    "time1": 1.0
+  },
+  "materials": [
+    {
+      "Lambertian": {
+        "texture_index": 0
+      }
+    },
+    {
+      "Lambertian": {
+        "texture_index": 1
+      }
+    },
+    {
+      "Lambertian": {
+        "texture_index": 2
+      }
+    },
+    {
+      "Lambertian": {
+        "texture_index": 3
+      }
+    },
+    {
+      "DiffuseLight": {
+        "texture_index": 4
+      }
+    }
+  ],
+  "textures": [
+    {
+      "Solid": {
+        "color": [
+          0.12,
+          0.45,
+          0.15
+        ]
+      }
+    },
+    {
+      "Solid": {
+        "color": [
+          0.65,
+          0.05,
+          0.05
+        ]
+      }
+    },
+    {
+      "Solid": {
+        "color": [
+          0.8,
+          0.8,
+          0.8
+        ]
+      }
+    },
+    {
+      "Solid": {
+        "color": [
+          0.73,
+          0.73,
+          0.73
+        ]
+      }
+    },
+    {
+      "Solid": {
+        "color": [
+          15.0,
+          15.0,
+          15.0
+        ]
+      }
+    }
+  ]
+}
