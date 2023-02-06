@@ -1,0 +1,66 @@
+{
+  "settings": {
+    "image_width": 400,
+    "aspect_ratio": 1.7777778,
+    "samples": 100,
+    "max_depth": 10,
+    "background_color": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "path": "./output/test2.png"
+  },
+  "world": {
+    "objects": [
+      {
+        "Sphere": {
+          "center": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radius": 2.0,
+          "material_index": 0
+        }
+      }
+    ]
+  },
+  "camera": {
+    "look_from": [
+      13.0,
+      2.0,
+      3.0
+    ],
+    "look_at": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "vup": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "vfov": 20.0,
+    "aspect_ratio": 1.7777778,
+    "aperture": 2.0,
+    "focus_dist": 13.490738,
+    "time0": 0.0,
+    "time1": 1.0
+  },
+  "materials": [
+    {
+      "Lambertian": {
+        "texture_index": 0
+      }
+    }
+  ],
+  "textures": [
+    {
+      "Image": {
+        "path": "./assets/earthmap.jpg"
+      }
+    }
+  ]
+}

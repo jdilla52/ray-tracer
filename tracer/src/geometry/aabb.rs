@@ -1,8 +1,10 @@
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
 
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy)]
+// this is prett but but consider wraping usage in pointer
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub struct Aabb {
     pub min: Vec3A,
     pub max: Vec3A,

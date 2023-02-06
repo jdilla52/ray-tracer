@@ -1,20 +1,40 @@
 use crate::geometry::aabb::Aabb;
-use crate::geometry::Hittable;
+use crate::geometry::{Geometry, GeometryFile, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
-
-
-
 use log::debug;
 
+// this is an odd type as it is a geometry that contains a geometry
+use crate::error::{TracerError, TracerResult};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ConstantMediumBuilder {
+    pub boundary: Box<GeometryFile>,
+    pub density: f32,
+    pub material_index: usize,
+}
+
+impl TryInto<Geometry> for ConstantMediumBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Geometry> {
+        Ok(Geometry::ConstantMedium(ConstantMedium::new(
+            self.boundary.try_into()?,
+            self.density,
+            self.material_index,
+        )))
+    }
+}
+
 pub struct ConstantMedium {
-    pub boundary: Box<dyn Hittable>,
+    pub boundary: Box<Geometry>,
     pub material_index: usize,
     pub neg_inv_density: f32,
 }
 
 impl ConstantMedium {
-    pub fn new(b: Box<dyn Hittable>, d: f32, material_index: usize) -> Self {
+    pub fn new(b: Box<Geometry>, d: f32, material_index: usize) -> Self {
         Self {
             boundary: b,
             neg_inv_density: -1.0 / d,

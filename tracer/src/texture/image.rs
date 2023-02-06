@@ -12,6 +12,12 @@ pub struct ImageBuilder {
     path: String,
 }
 
+impl ImageBuilder {
+    pub fn new(path: String) -> Self {
+        ImageBuilder { path }
+    }
+}
+
 impl TryInto<Textures> for ImageBuilder {
     type Error = TracerError;
 

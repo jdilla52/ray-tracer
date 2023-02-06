@@ -7,35 +7,26 @@ mod renderer;
 mod texture;
 mod vec3;
 
+use crate::geometry::hittable::{HittableListBuilder};
+use std::fs;
 
-
-
-use crate::geometry::hittable::HittableList;
 
 use crate::geometry::sphere::Sphere;
 
-
-
-
-use crate::geometry::Geometry;
-
-
+use crate::geometry::{GeometryFile};
 
 use crate::material::lambertian::Lambertian;
 
-use crate::material::{Materials};
-use crate::renderer::{RenderSettings, Renderer};
+use crate::material::Materials;
+use crate::renderer::{RenderBuilder};
 
-use crate::texture::image::Image;
+use crate::texture::image::{ImageBuilder};
 
-
-use crate::texture::Textures;
+use crate::texture::{TextureFile};
 use error::TracerResult;
 
+
 use glam::Vec3A;
-
-
-
 
 //
 // fn simple_light() -> HittableList {
@@ -200,12 +191,12 @@ use glam::Vec3A;
 //     ])
 // }
 
-fn earth() -> (Vec<Materials>, Vec<Textures>, HittableList) {
-    let textures = vec![Textures::Image(
-        Image::new("./assets/earthmap.jpg").unwrap(),
-    )];
+fn earth() -> (Vec<Materials>, Vec<TextureFile>, HittableListBuilder) {
+    let textures = vec![TextureFile::Image(ImageBuilder::new(
+        "./assets/earthmap.jpg".to_string(),
+    ))];
     let materials = vec![Materials::Lambertian(Lambertian::new(0))];
-    let geo = HittableList::new(vec![Geometry::Sphere(Sphere::new(
+    let geo = HittableListBuilder::new(vec![GeometryFile::Sphere(Sphere::new(
         Vec3A::new(0.0, 0.0, 0.0),
         2.0,
         0,
@@ -213,52 +204,59 @@ fn earth() -> (Vec<Materials>, Vec<Textures>, HittableList) {
 
     (materials, textures, geo)
 }
-pub fn write_image(path: String) -> TracerResult<()> {
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
-    let look_from = Vec3A::new(13., 2., 3.);
-    let look_at = Vec3A::new(0., 0., 0.);
-    let vup = Vec3A::new(0., 1., 0.);
-    let dist_to_focus = (look_from - look_at).length();
-    let aperture = 2.0;
-    let background = &Vec3A::new(1.0, 1.0, 1.0);
-    let camera = camera::Camera::new(
-        look_from,
-        look_at,
-        vup,
-        20.0,
-        aspect_ratio,
-        aperture,
-        dist_to_focus,
-        0.0,
-        1.0,
-    );
+pub fn write_image() -> TracerResult<()> {
+    let file = fs::File::open("./assets/test.json")?;
+    let render: RenderBuilder = serde_json::from_reader(file)?;
+    render.build()?.render()?;
 
-    let samples = 100;
-    let max_depth = 10;
+    // let (mat, texture, geo) = earth();
+    //
+    // let settings =  RenderSettings {
+    //     image_width: 400,
+    //     aspect_ratio: 16.0 / 9.0,
+    //     samples: 100,
+    //     max_depth: 10,
+    //     background_color: Vec3A::new(0.0, 0.0, 0.0),
+    //     path,
+    // };
+    // let look_from = Vec3A::new(13., 2., 3.);
+    // let look_at = Vec3A::new(0., 0., 0.);
+    // let camera = CamerBuilder::new(
+    //    look_from,
+    //     look_at,
+    //     Vec3A::new(0., 1., 0.),
+    //     20.,
+    //     16.0 / 9.0,
+    //     2.0,
+    //     (look_from - look_at).length(),
+    //     0.0,
+    //     1.0,
+    // );
+    //
+    //
+    // let r = RenderBuilder{
+    //     settings,
+    //     world: geo,
+    //     camera,
+    //     materials: mat,
+    //     textures: texture,
+    // };
+    //
+    // serde_json::to_writer_pretty(File::create("./output/test.json").unwrap(), &r).unwrap();
 
-    let (mat, texture, geo) = earth();
-
-    let renderer = Renderer::new(
-        mat,
-        texture,
-        geo,
-        camera.clone(),
-        RenderSettings {
-            image_width,
-            aspect_ratio,
-            samples,
-            max_depth,
-            background_color: background.clone(),
-            path,
-        },
-    );
-
-    renderer.render()?;
+    // let renderer = Renderer::new(
+    //     mat,
+    //     texture,
+    //     geo,
+    //     camera.clone(),
+    //     settings
+    // );
+    //
+    // renderer.render()?;
 
     Ok(())
 }
 
-fn main() {
-    write_image("./output/test.png".to_string()).unwrap();
+fn main() -> TracerResult<()> {
+    write_image()
 }

@@ -1,10 +1,34 @@
+use crate::error::{TracerError, TracerResult};
 use crate::geometry::aabb::Aabb;
-use crate::geometry::{Geometry, Hittable};
+use crate::geometry::{Geometry, GeometryFile, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct HittableListBuilder {
+    pub objects: Vec<GeometryFile>,
+}
 
+impl HittableListBuilder {
+    pub fn new(objects: Vec<GeometryFile>) -> Self {
+        HittableListBuilder { objects }
+    }
+}
+
+impl TryInto<Geometry> for HittableListBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Geometry> {
+        Ok(Geometry::HittableList(HittableList::new(
+            self.objects
+                .into_iter()
+                .map(|object| object.try_into())
+                .collect::<TracerResult<Vec<Geometry>>>()?,
+        )))
+    }
+}
 
 pub struct HittableList {
     pub objects: Vec<Geometry>,

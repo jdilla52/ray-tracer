@@ -1,13 +1,46 @@
-use crate::camera::Camera;
+use crate::camera::{CamerBuilder, Camera};
 use crate::error::TracerResult;
-use crate::geometry::hittable::HittableList;
-use crate::geometry::{Hittable};
+use crate::geometry::hittable::{HittableListBuilder};
+use crate::geometry::{Geometry, Hittable};
 use crate::intersection::ray::Ray;
 use crate::material::{Material, Materials};
-use crate::texture::{Texture, Textures};
+use crate::texture::{Texture, TextureFile, Textures};
 use crate::vec3;
 use glam::Vec3A;
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct RenderBuilder {
+    pub settings: RenderSettings,
+    pub world: HittableListBuilder,
+    pub camera: CamerBuilder,
+    pub materials: Vec<Materials>,
+    pub textures: Vec<TextureFile>,
+}
+
+impl RenderBuilder {
+    pub fn build(self) -> TracerResult<Renderer> {
+        let textures = self
+            .textures
+            .into_iter()
+            .map(|t| t.try_into())
+            .collect::<TracerResult<Vec<Textures>>>()?;
+        let camera = self.camera.build();
+        let geometry = self.world.try_into()?;
+        let settings = self.settings.clone();
+
+        Ok(Renderer::new(
+            self.materials.clone(),
+            textures,
+            geometry,
+            camera,
+            settings,
+        ))
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RenderSettings {
     pub image_width: u32,
     pub aspect_ratio: f32,
@@ -43,7 +76,7 @@ impl RenderSettings {
 pub struct Renderer {
     materials: Vec<Materials>,
     textures: Vec<Textures>,
-    geometry: HittableList,
+    geometry: Geometry,
     camera: Camera,
 
     settings: RenderSettings,
@@ -53,7 +86,7 @@ impl Renderer {
     pub fn new(
         materials: Vec<Materials>,
         textures: Vec<Textures>,
-        geometry: HittableList,
+        geometry: Geometry,
         camera: Camera,
         settings: RenderSettings,
     ) -> Self {

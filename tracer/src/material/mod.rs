@@ -13,7 +13,6 @@ use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
 use glam::Vec3A;
 
-
 use serde::{Deserialize, Serialize};
 
 pub struct ScatterRecord {
@@ -41,7 +40,6 @@ pub trait Material {
         None
     }
 }
-
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum Materials {

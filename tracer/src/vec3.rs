@@ -2,8 +2,6 @@ use crate::vec3;
 use glam::Vec3A;
 use rand::Rng;
 
-
-
 pub fn random_range(min: f32, max: f32) -> Vec3A {
     let mut rng = rand::thread_rng(); // TODO: move once threading
     rng.gen::<Vec3A>() * (max - min) + min

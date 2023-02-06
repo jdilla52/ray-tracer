@@ -4,7 +4,6 @@ use crate::material::{Material, ScatterRecord};
 
 use crate::vec3;
 
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

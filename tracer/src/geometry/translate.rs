@@ -1,16 +1,36 @@
 use crate::geometry::aabb::Aabb;
-use crate::geometry::Hittable;
+use crate::geometry::{Geometry, GeometryFile, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
 
+use crate::error::{TracerError, TracerResult};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct TranslateBuilder {
+    pub object: Box<GeometryFile>,
+    pub offset: Vec3A,
+}
+
+impl TryInto<Geometry> for TranslateBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Geometry> {
+        Ok(Geometry::Translate(Translate::new(
+            self.object.try_into()?,
+            self.offset,
+        )))
+    }
+}
+
 pub struct Translate {
-    pub object: Box<dyn Hittable>,
+    pub object: Box<Geometry>,
     pub offset: Vec3A,
 }
 
 impl Translate {
-    pub fn new(object: Box<dyn Hittable>, offset: Vec3A) -> Self {
+    pub fn new(object: Box<Geometry>, offset: Vec3A) -> Self {
         Self { object, offset }
     }
 }

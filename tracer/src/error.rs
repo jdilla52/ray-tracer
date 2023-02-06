@@ -16,4 +16,7 @@ pub enum TracerError {
 
     #[error("null bound box error")]
     Infallible(#[from] Infallible),
+
+    #[error("json input error")]
+    JsonInputError(#[from] serde_json::Error),
 }

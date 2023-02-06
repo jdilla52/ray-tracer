@@ -2,7 +2,6 @@ use crate::intersection::ray::Ray;
 
 use glam::Vec3A;
 
-
 pub struct HitRecord {
     pub root: f32,
     pub position: Vec3A,

@@ -1,20 +1,39 @@
 use crate::error::TracerError::BvhBoundingBoxError;
-use crate::error::TracerResult;
+use crate::error::{TracerError, TracerResult};
 use crate::geometry::aabb::Aabb;
-use crate::geometry::Hittable;
+use crate::geometry::{Geometry, GeometryFile, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use std::cmp::Ordering;
 use std::rc::Rc;
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct BvhNodeBuilder {
+    pub left: Box<GeometryFile>,
+    pub right: Box<GeometryFile>,
+    pub bounding_box: Aabb,
+}
+
+impl TryInto<Geometry> for BvhNodeBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Geometry> {
+        let l = self.left.try_into()?;
+        let r = self.right.try_into()?;
+        Ok(Geometry::BvhNode(BvhNode::new(l, r, self.bounding_box)))
+    }
+}
+
 pub struct BvhNode {
-    pub left: Rc<dyn Hittable>,
-    pub right: Rc<dyn Hittable>,
+    pub left: Rc<Geometry>,
+    pub right: Rc<Geometry>,
     pub bounding_box: Aabb,
 }
 
 impl BvhNode {
-    pub fn new(left: Rc<dyn Hittable>, right: Rc<dyn Hittable>, bounding_box: Aabb) -> BvhNode {
+    pub fn new(left: Rc<Geometry>, right: Rc<Geometry>, bounding_box: Aabb) -> BvhNode {
         BvhNode {
             left,
             right,
@@ -22,7 +41,8 @@ impl BvhNode {
         }
     }
 
-    pub fn from_list(list: Vec<Rc<dyn Hittable>>, t0: f32, t1: f32) -> TracerResult<BvhNode> {
+    // note that the rest of the geometry objects are stored in a flat list in the render context
+    pub fn from_list(list: Vec<Rc<Geometry>>, t0: f32, t1: f32) -> TracerResult<BvhNode> {
         let mut list = list;
         let axis = Axis::random();
         let object_span = list.len();
@@ -31,7 +51,7 @@ impl BvhNode {
             (list[0].to_owned(), list[0].to_owned())
         } else if object_span == 2 {
             if compare_boxes(&list[0], &list[1], axis) {
-                (list[0].clone(), list[1].to_owned())
+                (list[0].to_owned(), list[1].to_owned())
             } else {
                 (list[1].to_owned(), list[0].to_owned())
             }
@@ -40,8 +60,10 @@ impl BvhNode {
             let mid = object_span / 2;
             let left_list = list[0..mid].to_vec();
             let right_list = list[mid..].to_vec();
-            let left: Rc<dyn Hittable> = Rc::new(BvhNode::from_list(left_list, t0, t1)?);
-            let right: Rc<dyn Hittable> = Rc::new(BvhNode::from_list(right_list, t0, t1)?);
+            let left: Rc<Geometry> =
+                Rc::new(Geometry::BvhNode(BvhNode::from_list(left_list, t0, t1)?));
+            let right: Rc<Geometry> =
+                Rc::new(Geometry::BvhNode(BvhNode::from_list(right_list, t0, t1)?));
             (left, right)
         };
 
@@ -77,7 +99,7 @@ impl Axis {
     }
 }
 
-fn sort_boxes(a: &Rc<dyn Hittable>, b: &Rc<dyn Hittable>, axis: Axis) -> Ordering {
+fn sort_boxes(a: &Rc<Geometry>, b: &Rc<Geometry>, axis: Axis) -> Ordering {
     if compare_boxes(a, b, axis) {
         Ordering::Less
     } else {
@@ -85,7 +107,7 @@ fn sort_boxes(a: &Rc<dyn Hittable>, b: &Rc<dyn Hittable>, axis: Axis) -> Orderin
     }
 }
 
-fn compare_boxes(a: &Rc<dyn Hittable>, b: &Rc<dyn Hittable>, axis: Axis) -> bool {
+fn compare_boxes(a: &Rc<Geometry>, b: &Rc<Geometry>, axis: Axis) -> bool {
     let box_a = a.bounding_box(0.0, 0.0).unwrap();
     let box_b = b.bounding_box(0.0, 0.0).unwrap();
     match axis {

@@ -2,9 +2,6 @@ use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::{Material, ScatterRecord};
 
-
-
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

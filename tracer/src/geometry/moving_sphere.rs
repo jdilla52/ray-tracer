@@ -6,7 +6,9 @@ use crate::intersection::ray::Ray;
 
 use glam::Vec3A;
 
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MovingSphere {
     pub center0: Vec3A,
     pub center1: Vec3A,

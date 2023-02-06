@@ -4,7 +4,9 @@ use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 
 use glam::Vec3A;
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Sphere {
     pub center: Vec3A,
     pub radius: f32,

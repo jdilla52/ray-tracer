@@ -2,7 +2,6 @@ use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::{Material, ScatterRecord};
 
-
 use crate::vec3::random_in_unit_sphere;
 
 use serde::{Deserialize, Serialize};

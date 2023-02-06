@@ -1,17 +1,20 @@
+use crate::error::{TracerError, TracerResult};
 use crate::geometry::aabb::Aabb;
-use crate::geometry::bvh::BvhNode;
-use crate::geometry::constant_medium::ConstantMedium;
-use crate::geometry::cornell_box::CornellBox;
-use crate::geometry::hittable::HittableList;
+use crate::geometry::bvh::{BvhNode, BvhNodeBuilder};
+use crate::geometry::constant_medium::{ConstantMedium, ConstantMediumBuilder};
+use crate::geometry::cornell_box::{CornellBox, CornellBoxBuilder};
+use crate::geometry::hittable::{HittableList, HittableListBuilder};
 use crate::geometry::moving_sphere::MovingSphere;
-use crate::geometry::rotate_y::RotateY;
+use crate::geometry::rotate_y::{RotateY, RotateYBuilder};
 use crate::geometry::sphere::Sphere;
-use crate::geometry::translate::Translate;
+use crate::geometry::translate::{Translate, TranslateBuilder};
 use crate::geometry::xy_rect::XyRect;
 use crate::geometry::xz_rect::XzRect;
 use crate::geometry::yz_rect::YzRect;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
+
+use std::rc::Rc;
 
 pub mod aabb;
 pub mod bvh;
@@ -25,6 +28,92 @@ pub mod translate;
 pub mod xy_rect;
 pub mod xz_rect;
 pub mod yz_rect;
+
+// we wont support serialization of the bvh for now.
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum GeometryFile {
+    Sphere(Sphere),
+    XyRect(XyRect),
+    XzRect(XzRect),
+    YzRect(YzRect),
+    Translate(TranslateBuilder),
+    RotateY(RotateYBuilder),
+    CornellBox(CornellBoxBuilder),
+    BvhNode(BvhNodeBuilder),
+    ConstantMedium(ConstantMediumBuilder),
+    MovingSphere(MovingSphere),
+    HittableList(HittableListBuilder),
+}
+
+impl TryInto<Geometry> for GeometryFile {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Geometry> {
+        match self {
+            GeometryFile::Sphere(sphere) => Ok(Geometry::Sphere(sphere)),
+            GeometryFile::XyRect(xy_rect) => Ok(Geometry::XyRect(xy_rect)),
+            GeometryFile::XzRect(xz_rect) => Ok(Geometry::XzRect(xz_rect)),
+            GeometryFile::YzRect(yz_rect) => Ok(Geometry::YzRect(yz_rect)),
+            GeometryFile::Translate(translate) => Ok(translate.try_into()?),
+            GeometryFile::RotateY(rotate_y) => Ok(rotate_y.try_into()?),
+            GeometryFile::CornellBox(cornell_box) => Ok(cornell_box.try_into()?),
+            GeometryFile::ConstantMedium(constant_medium) => Ok(constant_medium.try_into()?),
+            GeometryFile::MovingSphere(moving_sphere) => Ok(Geometry::MovingSphere(moving_sphere)),
+            GeometryFile::HittableList(hittable_list) => Ok(hittable_list.try_into()?),
+            GeometryFile::BvhNode(bvh_node) => Ok(bvh_node.try_into()?),
+        }
+    }
+}
+
+impl TryInto<Box<Geometry>> for Box<GeometryFile> {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Box<Geometry>> {
+        match *self {
+            GeometryFile::Sphere(sphere) => Ok(Box::new(Geometry::Sphere(sphere))),
+            GeometryFile::XyRect(xy_rect) => Ok(Box::new(Geometry::XyRect(xy_rect))),
+            GeometryFile::XzRect(xz_rect) => Ok(Box::new(Geometry::XzRect(xz_rect))),
+            GeometryFile::YzRect(yz_rect) => Ok(Box::new(Geometry::YzRect(yz_rect))),
+            GeometryFile::Translate(translate) => Ok(Box::new(translate.try_into()?)),
+            GeometryFile::RotateY(rotate_y) => Ok(Box::new(rotate_y.try_into()?)),
+            GeometryFile::CornellBox(cornell_box) => Ok(Box::new(cornell_box.try_into()?)),
+            GeometryFile::ConstantMedium(constant_medium) => {
+                Ok(Box::new(constant_medium.try_into()?))
+            }
+            GeometryFile::MovingSphere(moving_sphere) => {
+                Ok(Box::new(Geometry::MovingSphere(moving_sphere)))
+            }
+            GeometryFile::HittableList(hittable_list) => Ok(Box::new(hittable_list.try_into()?)),
+            GeometryFile::BvhNode(bvh_node) => Ok(Box::new(bvh_node.try_into()?)),
+        }
+    }
+}
+
+impl TryInto<Rc<Geometry>> for Box<GeometryFile> {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Rc<Geometry>> {
+        match *self {
+            GeometryFile::Sphere(sphere) => Ok(Rc::new(Geometry::Sphere(sphere))),
+            GeometryFile::XyRect(xy_rect) => Ok(Rc::new(Geometry::XyRect(xy_rect))),
+            GeometryFile::XzRect(xz_rect) => Ok(Rc::new(Geometry::XzRect(xz_rect))),
+            GeometryFile::YzRect(yz_rect) => Ok(Rc::new(Geometry::YzRect(yz_rect))),
+            GeometryFile::Translate(translate) => Ok(Rc::new(translate.try_into()?)),
+            GeometryFile::RotateY(rotate_y) => Ok(Rc::new(rotate_y.try_into()?)),
+            GeometryFile::CornellBox(cornell_box) => Ok(Rc::new(cornell_box.try_into()?)),
+            GeometryFile::ConstantMedium(constant_medium) => {
+                Ok(Rc::new(constant_medium.try_into()?))
+            }
+            GeometryFile::MovingSphere(moving_sphere) => {
+                Ok(Rc::new(Geometry::MovingSphere(moving_sphere)))
+            }
+            GeometryFile::HittableList(hittable_list) => Ok(Rc::new(hittable_list.try_into()?)),
+            GeometryFile::BvhNode(bvh_node) => Ok(Rc::new(bvh_node.try_into()?)),
+        }
+    }
+}
 
 pub enum Geometry {
     Sphere(Sphere),

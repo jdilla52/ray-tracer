@@ -5,7 +5,9 @@ use crate::intersection::ray::Ray;
 
 use glam::Vec3A;
 
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct XzRect {
     material_index: usize,
     x0: f32,

@@ -8,6 +8,27 @@ use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
 
+use crate::error::{TracerError, TracerResult};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CornellBoxBuilder {
+    pub min: Vec3A,
+    pub max: Vec3A,
+    pub material_index: usize,
+}
+
+impl TryInto<Geometry> for CornellBoxBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Geometry> {
+        Ok(Geometry::CornellBox(CornellBox::new(
+            self.min,
+            self.max,
+            self.material_index,
+        )))
+    }
+}
 
 pub struct CornellBox {
     pub min: Vec3A,

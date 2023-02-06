@@ -1,12 +1,31 @@
 use crate::geometry::aabb::Aabb;
-use crate::geometry::Hittable;
+use crate::geometry::{Geometry, GeometryFile, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
 
+use crate::error::{TracerError, TracerResult};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct RotateYBuilder {
+    pub object: Box<GeometryFile>,
+    pub angle: f32,
+}
+
+impl TryInto<Geometry> for RotateYBuilder {
+    type Error = TracerError;
+
+    fn try_into(self) -> TracerResult<Geometry> {
+        Ok(Geometry::RotateY(RotateY::new(
+            self.object.try_into()?,
+            self.angle,
+        )))
+    }
+}
 
 pub struct RotateY {
-    pub object: Box<dyn Hittable>,
+    pub object: Box<Geometry>,
     pub sin_theta: f32,
     pub cos_theta: f32,
     pub has_box: bool,
@@ -14,7 +33,7 @@ pub struct RotateY {
 }
 
 impl RotateY {
-    pub(crate) fn new(object: Box<dyn Hittable>, angle: f32) -> Self {
+    pub(crate) fn new(object: Box<Geometry>, angle: f32) -> Self {
         let radians = angle.to_radians();
         let sin_theta = radians.sin();
         let cos_theta = radians.cos();

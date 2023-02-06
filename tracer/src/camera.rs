@@ -2,6 +2,60 @@ use crate::intersection::ray::Ray;
 use crate::vec3;
 use glam::Vec3A;
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CamerBuilder {
+    pub look_from: Vec3A,
+    pub look_at: Vec3A,
+    pub vup: Vec3A,
+    pub vfov: f32,
+    pub aspect_ratio: f32,
+    pub aperture: f32,
+    pub focus_dist: f32,
+    pub time0: f32,
+    pub time1: f32,
+}
+
+impl CamerBuilder {
+    pub fn new(
+        look_from: Vec3A,
+        look_at: Vec3A,
+        vup: Vec3A,
+        vfov: f32,
+        aspect_ratio: f32,
+        aperture: f32,
+        focus_dist: f32,
+        time0: f32,
+        time1: f32,
+    ) -> CamerBuilder {
+        Self {
+            look_from,
+            look_at,
+            vup,
+            vfov,
+            aspect_ratio,
+            aperture,
+            focus_dist,
+            time0,
+            time1,
+        }
+    }
+    pub fn build(&self) -> Camera {
+        Camera::new(
+            self.look_from,
+            self.look_at,
+            self.vup,
+            self.vfov,
+            self.aspect_ratio,
+            self.aperture,
+            self.focus_dist,
+            self.time0,
+            self.time1,
+        )
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Camera {
     pub horizontal: Vec3A,
