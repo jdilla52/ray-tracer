@@ -5,10 +5,15 @@ use std::boxed::Box;
 use crate::error::{TracerError, TracerResult};
 use serde::{Deserialize, Serialize};
 
+fn default_scale() -> f32 {
+    10.0
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CheckerBuilder {
     pub odd: Box<TextureFile>,
     pub even: Box<TextureFile>,
+    #[serde(default = "default_scale")]
     pub scale: f32,
 }
 

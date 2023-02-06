@@ -7,26 +7,24 @@ mod renderer;
 mod texture;
 mod vec3;
 
-use crate::geometry::hittable::{HittableListBuilder};
+
 use std::fs;
 
 
-use crate::geometry::sphere::Sphere;
 
-use crate::geometry::{GeometryFile};
 
-use crate::material::lambertian::Lambertian;
 
-use crate::material::Materials;
-use crate::renderer::{RenderBuilder};
 
-use crate::texture::image::{ImageBuilder};
 
-use crate::texture::{TextureFile};
+
+use crate::renderer::RenderBuilder;
+
+
+
+
 use error::TracerResult;
 
 
-use glam::Vec3A;
 
 //
 // fn simple_light() -> HittableList {
@@ -191,72 +189,13 @@ use glam::Vec3A;
 //     ])
 // }
 
-fn earth() -> (Vec<Materials>, Vec<TextureFile>, HittableListBuilder) {
-    let textures = vec![TextureFile::Image(ImageBuilder::new(
-        "./assets/earthmap.jpg".to_string(),
-    ))];
-    let materials = vec![Materials::Lambertian(Lambertian::new(0))];
-    let geo = HittableListBuilder::new(vec![GeometryFile::Sphere(Sphere::new(
-        Vec3A::new(0.0, 0.0, 0.0),
-        2.0,
-        0,
-    ))]);
-
-    (materials, textures, geo)
-}
-pub fn write_image() -> TracerResult<()> {
+pub fn render_from_json() -> TracerResult<()> {
     let file = fs::File::open("./assets/test.json")?;
     let render: RenderBuilder = serde_json::from_reader(file)?;
     render.build()?.render()?;
-
-    // let (mat, texture, geo) = earth();
-    //
-    // let settings =  RenderSettings {
-    //     image_width: 400,
-    //     aspect_ratio: 16.0 / 9.0,
-    //     samples: 100,
-    //     max_depth: 10,
-    //     background_color: Vec3A::new(0.0, 0.0, 0.0),
-    //     path,
-    // };
-    // let look_from = Vec3A::new(13., 2., 3.);
-    // let look_at = Vec3A::new(0., 0., 0.);
-    // let camera = CamerBuilder::new(
-    //    look_from,
-    //     look_at,
-    //     Vec3A::new(0., 1., 0.),
-    //     20.,
-    //     16.0 / 9.0,
-    //     2.0,
-    //     (look_from - look_at).length(),
-    //     0.0,
-    //     1.0,
-    // );
-    //
-    //
-    // let r = RenderBuilder{
-    //     settings,
-    //     world: geo,
-    //     camera,
-    //     materials: mat,
-    //     textures: texture,
-    // };
-    //
-    // serde_json::to_writer_pretty(File::create("./output/test.json").unwrap(), &r).unwrap();
-
-    // let renderer = Renderer::new(
-    //     mat,
-    //     texture,
-    //     geo,
-    //     camera.clone(),
-    //     settings
-    // );
-    //
-    // renderer.render()?;
-
     Ok(())
 }
 
 fn main() -> TracerResult<()> {
-    write_image()
+    render_from_json()
 }

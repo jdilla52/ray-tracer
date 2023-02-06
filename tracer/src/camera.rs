@@ -4,16 +4,45 @@ use glam::Vec3A;
 
 use serde::{Deserialize, Serialize};
 
+fn default_time0() -> f32 {
+    0.0
+}
+fn default_time1() -> f32 {
+    1.0
+}
+
+fn default_vfov() -> f32 {
+    20.0
+}
+
+fn default_vup() -> Vec3A {
+    Vec3A::new(0.0, 1.0, 0.0)
+}
+
+fn default_aperture() -> f32 {
+    1.0
+}
+
+fn default_aspect_ratio() -> f32 {
+    16.0 / 9.0
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CamerBuilder {
     pub look_from: Vec3A,
     pub look_at: Vec3A,
+    #[serde(default = "default_vup")]
     pub vup: Vec3A,
+    #[serde(default = "default_vfov")]
     pub vfov: f32,
+    #[serde(default = "default_aspect_ratio")]
     pub aspect_ratio: f32,
+    #[serde(default = "default_aperture")]
     pub aperture: f32,
     pub focus_dist: f32,
+    #[serde(default = "default_time0")]
     pub time0: f32,
+    #[serde(default = "default_time1")]
     pub time1: f32,
 }
 

@@ -8,9 +8,13 @@ use log::debug;
 use crate::error::{TracerError, TracerResult};
 use serde::{Deserialize, Serialize};
 
+fn default_density() -> f32 {
+    0.1
+}
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ConstantMediumBuilder {
     pub boundary: Box<GeometryFile>,
+    #[serde(default = "default_density")]
     pub density: f32,
     pub material_index: usize,
 }

@@ -5,8 +5,13 @@ use glam::Vec3A;
 use crate::error::{TracerError, TracerResult};
 use serde::{Deserialize, Serialize};
 
+fn default_scale() -> f32 {
+    256.0
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct NoiseBuilder {
+    #[serde(default = "default_scale")]
     scale: f32,
 }
 

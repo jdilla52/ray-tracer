@@ -1,6 +1,6 @@
 use crate::camera::{CamerBuilder, Camera};
 use crate::error::TracerResult;
-use crate::geometry::hittable::{HittableListBuilder};
+use crate::geometry::hittable::HittableListBuilder;
 use crate::geometry::{Geometry, Hittable};
 use crate::intersection::ray::Ray;
 use crate::material::{Material, Materials};
@@ -40,12 +40,35 @@ impl RenderBuilder {
     }
 }
 
+fn default_width() -> u32 {
+    1000
+}
+
+fn default_aspect_ratio() -> f32 {
+    16.0 / 9.0
+}
+
+fn default_max_depth() -> u32 {
+    50
+}
+fn default_samples() -> u32 {
+    10
+}
+fn default_background_color() -> Vec3A {
+    Vec3A::new(0.0, 0.0, 0.0)
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RenderSettings {
+    #[serde(default = "default_width")]
     pub image_width: u32,
+    #[serde(default = "default_aspect_ratio")]
     pub aspect_ratio: f32,
+    #[serde(default = "default_samples")]
     pub samples: u32,
+    #[serde(default = "default_max_depth")]
     pub max_depth: u32,
+    #[serde(default = "default_background_color")]
     pub background_color: Vec3A,
     pub path: String,
 }
