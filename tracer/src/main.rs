@@ -24,7 +24,7 @@ use crate::material::diffuse_light::DiffuseLight;
 use crate::material::lambertian::Lambertian;
 use crate::material::metal::Metal;
 use crate::material::{Material, Materials};
-use crate::renderer::Renderer;
+use crate::renderer::{RenderSettings, Renderer};
 use crate::texture::checker::Checker;
 use crate::texture::image::Image;
 use crate::texture::noise::Noise;
@@ -32,6 +32,7 @@ use crate::texture::solid::Solid;
 use error::TracerResult;
 use geometry::Hittable;
 use glam::Vec3A;
+use image::RgbImage;
 use std::fs::File;
 use std::io::Write;
 use std::rc::Rc;
@@ -220,7 +221,7 @@ pub fn write_image(path: String) -> TracerResult<()> {
     let vup = Vec3A::new(0., 1., 0.);
     let dist_to_focus = (look_from - look_at).length();
     let aperture = 2.0;
-    let background = &Vec3A::new(0.0, 0.0, 0.0);
+    let background = &Vec3A::new(1.0, 1.0, 1.0);
     let camera = camera::Camera::new(
         look_from,
         look_at,
@@ -243,34 +244,21 @@ pub fn write_image(path: String) -> TracerResult<()> {
         vec![],
         geo,
         camera.clone(),
-        Vec3A::new(1., 1., 1.),
-        max_depth,
+        RenderSettings {
+            image_width,
+            aspect_ratio,
+            samples,
+            max_depth,
+            background_color: background.clone(),
+            path,
+        },
     );
 
-    let mut output = File::create(path)?;
-    writeln!(&mut output, "P3\n{} {}\n255", image_width, image_height)?;
-    for j in (0..image_height - 1).rev() {
-        println!("Scanlines remaining: {}", j);
-        for i in 0..image_width {
-            let u = i as f32 / (image_width - 1) as f32;
-            let v = j as f32 / (image_height - 1) as f32;
-
-            let mut color = Vec3A::ZERO;
-            for s in 0..samples {
-                let u = (i as f32 + rand::random::<f32>()) / (image_width - 1) as f32;
-                let v = (j as f32 + rand::random::<f32>()) / (image_height - 1) as f32;
-                let ray = camera.get_ray(u, v);
-                let rc = renderer.ray_color(&ray, max_depth);
-
-                color += rc;
-            }
-            writeln!(&mut output, "{}", vec3::as_aggregated_color(color, samples))?;
-        }
-    }
+    renderer.render()?;
 
     Ok(())
 }
 
 fn main() {
-    write_image("./output/glam.ppm".to_string()).unwrap();
+    write_image("./output/test.png".to_string()).unwrap();
 }
