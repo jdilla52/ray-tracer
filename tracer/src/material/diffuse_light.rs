@@ -3,6 +3,7 @@ use crate::intersection::ray::Ray;
 use crate::material::{Material, ScatterRecord};
 
 use serde::{Deserialize, Serialize};
+use crate::texture::TexturesType;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct DiffuseLight {
@@ -16,7 +17,7 @@ impl DiffuseLight {
 }
 
 impl Material for DiffuseLight {
-    fn scatter(&self, _r_in: &Ray, _rec: &HitRecord) -> Option<ScatterRecord> {
+    fn scatter(&self, _r_in: &Ray, _rec: &HitRecord, textures: &Vec<TexturesType>) -> Option<ScatterRecord> {
         None
     }
 

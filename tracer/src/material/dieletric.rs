@@ -5,18 +5,21 @@ use crate::material::{Material, ScatterRecord};
 use crate::vec3;
 
 use serde::{Deserialize, Serialize};
+use crate::texture::TexturesType;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Dieletric {
     pub ref_idx: f32,
     pub texture_index: usize,
+    pub emitted: Option<usize>,
 }
 
 impl Dieletric {
-    pub fn new(ref_idx: f32, texture_index: usize) -> Self {
+    pub fn new(ref_idx: f32, texture_index: usize, emitted: Option<usize>) -> Self {
         Dieletric {
             ref_idx,
             texture_index,
+            emitted
         }
     }
     fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
@@ -28,7 +31,7 @@ impl Dieletric {
 }
 
 impl Material for Dieletric {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord, textures: &Vec<TexturesType>) -> Option<ScatterRecord> {
         let reflected = vec3::reflect(r_in.direction.normalize(), rec.normal);
         // let attenuation = Vec3A::new(1.0, 1.0, 1.0);
 
@@ -55,5 +58,12 @@ impl Material for Dieletric {
             texture_index: self.texture_index,
             scattered: Ray::new(rec.position, direction, r_in.time),
         })
+    }
+    fn emitted(&self) -> Option<usize> {
+        if let Some(emitted) = self.emitted {
+            Some(emitted)
+        } else {
+            None
+        }
     }
 }

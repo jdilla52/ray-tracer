@@ -1,4 +1,4 @@
-use crate::texture::{Texture, TextureFile, Textures};
+use crate::texture::{Texture, TextureFile, TexturesType};
 use glam::Vec3A;
 use std::boxed::Box;
 
@@ -23,11 +23,11 @@ impl CheckerBuilder {
     }
 }
 
-impl TryInto<Textures> for CheckerBuilder {
+impl TryInto<TexturesType> for CheckerBuilder {
     type Error = TracerError;
 
-    fn try_into(self) -> TracerResult<Textures> {
-        Ok(Textures::Checker(Checker::new(
+    fn try_into(self) -> TracerResult<TexturesType> {
+        Ok(TexturesType::Checker(Checker::new(
             self.odd.try_into()?,
             self.even.try_into()?,
             self.scale,
@@ -36,13 +36,13 @@ impl TryInto<Textures> for CheckerBuilder {
 }
 
 pub struct Checker {
-    pub odd: Box<Textures>,
-    pub even: Box<Textures>,
+    pub odd: Box<TexturesType>,
+    pub even: Box<TexturesType>,
     pub scale: f32,
 }
 
 impl Checker {
-    pub fn new(odd: Box<Textures>, even: Box<Textures>, scale: f32) -> Self {
+    pub fn new(odd: Box<TexturesType>, even: Box<TexturesType>, scale: f32) -> Self {
         Checker { odd, even, scale }
     }
 }

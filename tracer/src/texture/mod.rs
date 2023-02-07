@@ -24,46 +24,50 @@ pub enum TextureFile {
     Solid(Solid),
 }
 
-impl TryInto<Textures> for TextureFile {
+impl TryInto<TexturesType> for TextureFile {
     type Error = TracerError;
 
-    fn try_into(self) -> TracerResult<Textures> {
+    fn try_into(self) -> TracerResult<TexturesType> {
         match self {
             TextureFile::Checker(c) => Ok(c.try_into()?),
             TextureFile::Image(i) => Ok(i.try_into()?),
             TextureFile::Noise(n) => Ok(n.try_into()?),
-            TextureFile::Solid(s) => Ok(Textures::Solid(s)),
+            TextureFile::Solid(s) => Ok(TexturesType::Solid(s)),
         }
     }
 }
 
-impl TryInto<Box<Textures>> for Box<TextureFile> {
+impl TryInto<Box<TexturesType>> for Box<TextureFile> {
     type Error = TracerError;
 
-    fn try_into(self) -> TracerResult<Box<Textures>> {
+    fn try_into(self) -> TracerResult<Box<TexturesType>> {
         match *self {
             TextureFile::Checker(c) => Ok(Box::new(c.try_into()?)),
             TextureFile::Image(i) => Ok(Box::new(i.try_into()?)),
             TextureFile::Noise(n) => Ok(Box::new(n.try_into()?)),
-            TextureFile::Solid(s) => Ok(Box::new(Textures::Solid(s))),
+            TextureFile::Solid(s) => Ok(Box::new(TexturesType::Solid(s))),
         }
     }
 }
 
-pub enum Textures {
+struct TextureType {
+    textures: Vec<TextureType>,
+}
+
+pub enum TexturesType {
     Checker(Checker),
     Image(Image),
     Noise(Noise),
     Solid(Solid),
 }
 
-impl Texture for Textures {
+impl Texture for TexturesType {
     fn value(&self, u: f32, v: f32, p: Vec3A) -> Vec3A {
         match self {
-            Textures::Checker(t) => t.value(u, v, p),
-            Textures::Image(t) => t.value(u, v, p),
-            Textures::Noise(t) => t.value(u, v, p),
-            Textures::Solid(t) => t.value(u, v, p),
+            TexturesType::Checker(t) => t.value(u, v, p),
+            TexturesType::Image(t) => t.value(u, v, p),
+            TexturesType::Noise(t) => t.value(u, v, p),
+            TexturesType::Solid(t) => t.value(u, v, p),
         }
     }
 }

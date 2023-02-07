@@ -1,5 +1,5 @@
 use crate::texture::perlin::Perlin;
-use crate::texture::{Texture, Textures};
+use crate::texture::{Texture, TexturesType};
 use glam::Vec3A;
 
 use crate::error::{TracerError, TracerResult};
@@ -21,11 +21,11 @@ impl NoiseBuilder {
     }
 }
 
-impl TryInto<Textures> for NoiseBuilder {
+impl TryInto<TexturesType> for NoiseBuilder {
     type Error = TracerError;
 
-    fn try_into(self) -> TracerResult<Textures> {
-        Ok(Textures::Noise(Noise::new(self.scale)))
+    fn try_into(self) -> TracerResult<TexturesType> {
+        Ok(TexturesType::Noise(Noise::new(self.scale)))
     }
 }
 

@@ -1,5 +1,5 @@
 use crate::error::{TracerError, TracerResult};
-use crate::texture::{Texture, Textures};
+use crate::texture::{Texture, TexturesType};
 use glam::Vec3A;
 use image;
 use image::io::Reader;
@@ -18,11 +18,11 @@ impl ImageBuilder {
     }
 }
 
-impl TryInto<Textures> for ImageBuilder {
+impl TryInto<TexturesType> for ImageBuilder {
     type Error = TracerError;
 
-    fn try_into(self) -> TracerResult<Textures> {
-        Ok(Textures::Image(Image::new(&self.path)?))
+    fn try_into(self) -> TracerResult<TexturesType> {
+        Ok(TexturesType::Image(Image::new(&self.path)?))
     }
 }
 

@@ -3,8 +3,8 @@ use crate::error::TracerResult;
 use crate::geometry::hittable::HittableListBuilder;
 use crate::geometry::{Geometry, Hittable};
 use crate::intersection::ray::Ray;
-use crate::material::{Material, Materials};
-use crate::texture::{Texture, TextureFile, Textures};
+use crate::material::{Material, MaterialList, MaterialType};
+use crate::texture::{Texture, TextureFile, TexturesType};
 use crate::vec3;
 use glam::Vec3A;
 use rayon::prelude::*;
@@ -16,7 +16,7 @@ pub struct RenderBuilder {
     pub settings: RenderSettings,
     pub world: HittableListBuilder,
     pub camera: CamerBuilder,
-    pub materials: Vec<Materials>,
+    pub materials: Vec<MaterialType>,
     pub textures: Vec<TextureFile>,
 }
 
@@ -26,14 +26,18 @@ impl RenderBuilder {
             .textures
             .into_iter()
             .map(|t| t.try_into())
-            .collect::<TracerResult<Vec<Textures>>>()?;
+            .collect::<TracerResult<Vec<TexturesType>>>()?;
         let camera = self.camera.build();
         let geometry = self.world.try_into()?;
         let settings = self.settings.clone();
 
         Ok(Renderer::new(
-            self.materials.clone(),
-            textures,
+
+            MaterialList{
+                materials: self.materials.clone(),
+                textures,
+            },
+
             geometry,
             camera,
             settings,
@@ -98,8 +102,7 @@ impl RenderSettings {
 }
 
 pub struct Renderer {
-    materials: Vec<Materials>,
-    textures: Vec<Textures>,
+    materials: MaterialList,
     geometry: Geometry,
     camera: Camera,
 
@@ -108,15 +111,13 @@ pub struct Renderer {
 
 impl Renderer {
     pub fn new(
-        materials: Vec<Materials>,
-        textures: Vec<Textures>,
+        materials: MaterialList,
         geometry: Geometry,
         camera: Camera,
         settings: RenderSettings,
     ) -> Self {
         Self {
             materials,
-            textures,
             geometry,
             camera,
             settings,
@@ -185,14 +186,14 @@ impl Renderer {
 
     pub fn ray_color(&self, ray: &Ray, depth: i32) -> Vec3A {
         if let Some(t) = self.geometry.hit(ray, 0.001, f32::INFINITY) {
-            let material = &self.materials[t.material_index as usize];
+            let material = &self.materials.materials[t.material_index as usize];
             let emitted = if let Some(id) = material.emitted() {
-                self.textures[id].value(t.u, t.v, t.position)
+                self.materials.textures[id].value(t.u, t.v, t.position)
             } else {
                 Vec3A::ZERO
             };
-            if let Some(r) = material.scatter(ray, &t) {
-                let attenuation = self.textures[r.texture_index].value(t.u, t.v, t.position);
+            if let Some(r) = material.scatter(ray, &t, &self.materials.textures) {
+                let attenuation = self.materials.textures[r.texture_index].value(t.u, t.v, t.position);
                 emitted + attenuation * self.ray_color(&r.scattered, depth - 1)
             } else {
                 emitted

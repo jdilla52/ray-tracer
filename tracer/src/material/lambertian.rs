@@ -6,20 +6,22 @@ use crate::vec3;
 use glam::Vec3A;
 
 use serde::{Deserialize, Serialize};
+use crate::texture::TexturesType;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Lambertian {
     pub texture_index: usize,
+    pub emitted: Option<usize>,
 }
 
 impl Lambertian {
-    pub fn new(texture_index: usize) -> Self {
-        Lambertian { texture_index }
+    pub fn new(texture_index: usize, emitted: Option<usize>) -> Self {
+        Lambertian { texture_index, emitted }
     }
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord, textures: &Vec<TexturesType>) -> Option<ScatterRecord> {
         let scatter_direction = rec.normal + vec3::random_in_unit_sphere().normalize();
 
         // Catch degenerate scatter direction
@@ -33,5 +35,14 @@ impl Material for Lambertian {
             texture_index: self.texture_index,
             scattered: Ray::new(rec.position, scatter_direction, r_in.time),
         })
+    }
+
+
+    fn emitted(&self) -> Option<usize> {
+        if let Some(emitted) = self.emitted {
+            Some(emitted)
+        } else {
+            None
+        }
     }
 }
