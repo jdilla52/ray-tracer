@@ -7,7 +7,7 @@ use crate::material::{Material, Materials};
 use crate::texture::{Texture, Textures};
 use crate::vec3;
 use glam::Vec3A;
-
+use rayon::iter::{ParallelBridge, ParallelIterator};
 pub struct RenderSettings {
     pub image_width: u32,
     pub aspect_ratio: f32,
@@ -65,29 +65,35 @@ impl Renderer {
             settings,
         }
     }
-
     pub fn render(&self) -> TracerResult<()> {
         let height = self.settings.image_height();
         let mut imgbuf = image::ImageBuffer::new(self.settings.image_width, height);
         let path = self.settings.path.clone();
-        let rng = rand::thread_rng();
-        for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-            let mut color = Vec3A::ZERO;
-            for s in 0..self.settings.samples {
-                let u = (x as f32 + rand::random::<f32>()) / (self.settings.image_width - 1) as f32;
-                let v = (y as f32 + rand::random::<f32>()) / (height - 1) as f32;
-                let ray = self.camera.get_ray(u, v);
-                let rc = self.ray_color(&ray, self.settings.max_depth as i32);
-                // let rc = renderer.ray_color(u, v);
-                color += rc;
-            }
-            let scaled = vec3::sqrt(color * (1.0 / self.settings.samples as f32));
-            let clamped = scaled.clamp(Vec3A::ZERO, Vec3A::new(0.999, 0.999, 0.999)) * 255.99;
-            *pixel = image::Rgb([clamped.x as u8, clamped.y as u8, clamped.z as u8]);
-        }
+        let _rng = rand::thread_rng();
+        // todo evaluate if we should change how we're iterating.
+        imgbuf
+            .enumerate_pixels_mut()
+            .par_bridge()
+            .for_each(|(x, y, pixel)| self.per_pixel(x, y, pixel, height));
         imgbuf.save(path)?;
 
         Ok(())
+    }
+
+    pub fn per_pixel(&self, x: u32, y: u32, pixel: &mut image::Rgb<u8>, height: u32) {
+        let mut color = Vec3A::ZERO;
+        for _s in 0..self.settings.samples {
+            let u = (x as f32 + rand::random::<f32>()) / (self.settings.image_width - 1) as f32;
+            let v = (y as f32 + rand::random::<f32>()) / (height - 1) as f32;
+            let v = 1.0 - v; // flip height
+            let ray = self.camera.get_ray(u, v);
+            let rc = self.ray_color(&ray, self.settings.max_depth as i32);
+            // let rc = renderer.ray_color(u, v);
+            color += rc;
+        }
+        let scaled = vec3::sqrt(color * (1.0 / self.settings.samples as f32));
+        let clamped = scaled.clamp(Vec3A::ZERO, Vec3A::new(0.999, 0.999, 0.999)) * 255.99;
+        *pixel = image::Rgb([clamped.x as u8, clamped.y as u8, clamped.z as u8]);
     }
 
     // todo add energy conservation

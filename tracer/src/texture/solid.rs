@@ -1,6 +1,7 @@
 use crate::texture::Texture;
 use glam::Vec3A;
 
+#[derive(Clone, Debug)]
 pub struct Solid {
     pub color_value: Vec3A,
 }

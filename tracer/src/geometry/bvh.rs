@@ -5,16 +5,18 @@ use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use std::cmp::Ordering;
-use std::rc::Rc;
 
+
+
+#[derive(Clone)]
 pub struct BvhNode {
-    pub left: Rc<dyn Hittable>,
-    pub right: Rc<dyn Hittable>,
+    pub left: Box<dyn Hittable>,
+    pub right: Box<dyn Hittable>,
     pub bounding_box: Aabb,
 }
 
 impl BvhNode {
-    pub fn new(left: Rc<dyn Hittable>, right: Rc<dyn Hittable>, bounding_box: Aabb) -> BvhNode {
+    pub fn new(left: Box<dyn Hittable>, right: Box<dyn Hittable>, bounding_box: Aabb) -> BvhNode {
         BvhNode {
             left,
             right,
@@ -22,7 +24,7 @@ impl BvhNode {
         }
     }
 
-    pub fn from_list(list: Vec<Rc<dyn Hittable>>, t0: f32, t1: f32) -> TracerResult<BvhNode> {
+    pub fn from_list(list: Vec<Box<dyn Hittable>>, t0: f32, t1: f32) -> TracerResult<BvhNode> {
         let mut list = list;
         let axis = Axis::random();
         let object_span = list.len();
@@ -40,8 +42,8 @@ impl BvhNode {
             let mid = object_span / 2;
             let mut left_list = list[0..mid].to_vec();
             let mut right_list = list[mid..].to_vec();
-            let left: Rc<dyn Hittable> = Rc::new(BvhNode::from_list(left_list, t0, t1)?);
-            let right: Rc<dyn Hittable> = Rc::new(BvhNode::from_list(right_list, t0, t1)?);
+            let left: Box<dyn Hittable> = Box::new(BvhNode::from_list(left_list, t0, t1)?);
+            let right: Box<dyn Hittable> = Box::new(BvhNode::from_list(right_list, t0, t1)?);
             (left, right)
         };
 
@@ -77,7 +79,7 @@ impl Axis {
     }
 }
 
-fn sort_boxes(a: &Rc<dyn Hittable>, b: &Rc<dyn Hittable>, axis: Axis) -> Ordering {
+fn sort_boxes(a: &Box<dyn Hittable>, b: &Box<dyn Hittable>, axis: Axis) -> Ordering {
     if compare_boxes(a, b, axis) {
         Ordering::Less
     } else {
@@ -85,7 +87,7 @@ fn sort_boxes(a: &Rc<dyn Hittable>, b: &Rc<dyn Hittable>, axis: Axis) -> Orderin
     }
 }
 
-fn compare_boxes(a: &Rc<dyn Hittable>, b: &Rc<dyn Hittable>, axis: Axis) -> bool {
+fn compare_boxes(a: &Box<dyn Hittable>, b: &Box<dyn Hittable>, axis: Axis) -> bool {
     let box_a = a.bounding_box(0.0, 0.0).unwrap();
     let box_b = b.bounding_box(0.0, 0.0).unwrap();
     match axis {

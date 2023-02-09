@@ -1,15 +1,17 @@
 use crate::texture::Texture;
 use glam::Vec3A;
-use std::rc::Rc;
 
+
+
+#[derive(Clone, Debug)]
 pub struct Checker {
-    pub odd: Rc<dyn Texture>,
-    pub even: Rc<dyn Texture>,
+    pub odd: Box<dyn Texture>,
+    pub even: Box<dyn Texture>,
     pub scale: f32,
 }
 
 impl Checker {
-    pub fn new(odd: Rc<dyn Texture>, even: Rc<dyn Texture>, scale: f32) -> Self {
+    pub fn new(odd: Box<dyn Texture>, even: Box<dyn Texture>, scale: f32) -> Self {
         Checker { odd, even, scale }
     }
 }

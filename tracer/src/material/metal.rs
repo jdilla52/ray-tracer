@@ -4,16 +4,16 @@ use crate::material::{Material, ScatterRecord};
 use crate::texture::Texture;
 use crate::vec3;
 use glam::Vec3A;
-use std::rc::Rc;
+
 
 #[derive(Clone)]
 pub struct Metal {
-    pub albedo: Rc<dyn Texture>,
+    pub albedo: Box<dyn Texture>,
     pub fuzz: f32,
 }
 
 impl Metal {
-    pub fn new(albedo: Rc<dyn Texture>, fuzz: f32) -> Self {
+    pub fn new(albedo: Box<dyn Texture>, fuzz: f32) -> Self {
         Metal { albedo, fuzz }
     }
 }

@@ -6,16 +6,17 @@ use crate::material::isotropic::Isotropic;
 use crate::material::Material;
 use glam::Vec3A;
 use log::debug;
-use std::rc::Rc;
 
+
+#[derive(Clone)]
 pub struct ConstantMedium {
-    pub boundary: Rc<dyn Hittable>,
+    pub boundary: Box<dyn Hittable>,
     pub phase_function: usize,
     pub neg_inv_density: f32,
 }
 
 impl ConstantMedium {
-    pub fn new(b: Rc<dyn Hittable>, d: f32, phase_function: usize) -> Self {
+    pub fn new(b: Box<dyn Hittable>, d: f32, phase_function: usize) -> Self {
         Self {
             boundary: b,
             neg_inv_density: -1.0 / d,
@@ -23,11 +24,11 @@ impl ConstantMedium {
         }
     }
 
-    // pub fn new_from_density(b: Rc<dyn Hittable>, d: f32, c: Vec3A) -> Self {
+    // pub fn new_from_density(b: Box<dyn Hittable>, d: f32, c: Vec3A) -> Self {
     //     Self {
     //         boundary: b,
     //         neg_inv_density: -1.0 / d,
-    //         phase_function: Rc::new(Isotropic::new_color(c)),
+    //         phase_function: Box::new(Isotropic::new_color(c)),
     //     }
     // }
 }

@@ -5,8 +5,9 @@ use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::Material;
 use glam::Vec3A;
-use std::rc::Rc;
 
+
+#[derive(Clone)]
 pub struct MovingSphere {
     pub center0: Vec3A,
     pub center1: Vec3A,

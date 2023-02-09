@@ -5,6 +5,7 @@ use image;
 use image::io::Reader;
 use image::{DynamicImage, GenericImageView, Pixel};
 
+#[derive(Clone, Debug)]
 pub struct Image {
     pub image: DynamicImage,
     pub width: u32,

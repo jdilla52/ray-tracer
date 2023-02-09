@@ -2,6 +2,7 @@ use glam::Vec3A;
 use rand::Rng;
 static POINT_COUNT: usize = 256;
 
+#[derive(Clone, Debug)]
 pub struct Perlin {
     pub ran: Vec<Vec3A>,
     pub perm_x: Vec<i32>,

@@ -26,6 +26,7 @@ pub mod xy_rect;
 pub mod xz_rect;
 pub mod yz_rect;
 
+#[derive(Clone)]
 pub enum Geometry {
     Sphere(Sphere),
     XyRect(XyRect),
@@ -35,7 +36,7 @@ pub enum Geometry {
     RotateY(RotateY),
     CornellBox(CornellBox),
     ConstantMedium(ConstantMedium),
-    BvhNode(BvhNode),
+    // BvhNode(BvhNode),
     MovingSphere(MovingSphere),
     HittableList(HittableList),
 }
@@ -51,7 +52,7 @@ impl Hittable for Geometry {
             Geometry::RotateY(rotate_y) => rotate_y.hit(ray, t_min, t_max),
             Geometry::CornellBox(cornell_box) => cornell_box.hit(ray, t_min, t_max),
             Geometry::ConstantMedium(constant_medium) => constant_medium.hit(ray, t_min, t_max),
-            Geometry::BvhNode(bvh_node) => bvh_node.hit(ray, t_min, t_max),
+            // // Geometry::BvhNode(bvh_node) => bvh_node.hit(ray, t_min, t_max),
             Geometry::MovingSphere(moving_sphere) => moving_sphere.hit(ray, t_min, t_max),
             Geometry::HittableList(hittable_list) => hittable_list.hit(ray, t_min, t_max),
         }
@@ -67,7 +68,7 @@ impl Hittable for Geometry {
             Geometry::RotateY(rotate_y) => rotate_y.bounding_box(t0, t1),
             Geometry::CornellBox(cornell_box) => cornell_box.bounding_box(t0, t1),
             Geometry::ConstantMedium(constant_medium) => constant_medium.bounding_box(t0, t1),
-            Geometry::BvhNode(bvh_node) => bvh_node.bounding_box(t0, t1),
+            // Geometry::BvhNode(bvh_node) => bvh_node.bounding_box(t0, t1),
             Geometry::MovingSphere(moving_sphere) => moving_sphere.bounding_box(t0, t1),
             Geometry::HittableList(hittable_list) => hittable_list.bounding_box(t0, t1),
         }
@@ -75,7 +76,26 @@ impl Hittable for Geometry {
 }
 
 // enum Hittable
-pub trait Hittable {
+pub trait Hittable: Send + Sync + CloneHittable {
     fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
     fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb>;
+}
+
+impl Clone for Box<dyn Hittable> {
+    fn clone(&self) -> Box<dyn Hittable> {
+        self.clone_dyn()
+    }
+}
+
+pub trait CloneHittable {
+    fn clone_dyn<'a>(&self) -> Box<dyn Hittable>;
+}
+
+impl<T, J> CloneHittable for T
+    where
+        T: Hittable + Clone + 'static,
+{
+    fn clone_dyn(&self) -> Box<dyn Hittable> {
+        Box::new(self.clone())
+    }
 }

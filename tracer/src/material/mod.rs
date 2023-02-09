@@ -27,9 +27,9 @@ impl ScatterRecord {
     }
 }
 
-// todo move to rc over box - consider once we add threading
+// todo move to Box over box - consider once we add threading
 // starting to doubt if using pointers to trait objects is the best approach
-pub trait Material {
+pub trait Material: Send + Sync + CloneMaterial {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
     fn color(&self, u: f32, v: f32) -> Vec3A {
         Vec3A::ZERO
@@ -39,6 +39,7 @@ pub trait Material {
     }
 }
 
+#[derive(Clone)]
 pub enum Materials {
     Lambertian(Lambertian),
     Metal(Metal),
@@ -74,5 +75,24 @@ impl Material for Materials {
             Materials::Isotropic(i) => i.emitted(u, v, p),
             Materials::DiffuseLight(d) => d.emitted(u, v, p),
         }
+    }
+}
+
+impl Clone for Box<dyn Material> {
+    fn clone(&self) -> Box<dyn Material> {
+        self.clone_dyn()
+    }
+}
+
+pub trait CloneMaterial {
+    fn clone_dyn<'a>(&self) -> Box<dyn Material>;
+}
+
+impl<T> CloneMaterial for T
+    where
+        T: Material + Clone + 'static,
+{
+    fn clone_dyn(&self) -> Box<dyn Material> {
+        Box::new(self.clone())
     }
 }

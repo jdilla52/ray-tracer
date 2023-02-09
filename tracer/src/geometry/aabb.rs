@@ -2,7 +2,7 @@ use crate::intersection::ray::Ray;
 use glam::Vec3A;
 use std::cmp::min;
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct Aabb {
     pub(crate) min: Vec3A,
     pub(crate) max: Vec3A,

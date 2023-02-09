@@ -5,19 +5,19 @@ use crate::texture::solid::Solid;
 use crate::texture::Texture;
 use crate::vec3::random_in_unit_sphere;
 use glam::Vec3A;
-use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct Isotropic {
-    pub albedo: Rc<dyn Texture>,
+    pub albedo: Box<dyn Texture>,
 }
 
 impl Isotropic {
-    pub fn new(albedo: Rc<dyn Texture>) -> Self {
+    pub fn new(albedo: Box<dyn Texture>) -> Self {
         Self { albedo }
     }
     pub fn new_color(albedo: Vec3A) -> Self {
         Self {
-            albedo: Rc::new(Solid::new(albedo)),
+            albedo: Box::new(Solid::new(albedo)),
         }
     }
 }

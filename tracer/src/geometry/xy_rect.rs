@@ -4,8 +4,10 @@ use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::Material;
 use glam::Vec3A;
-use std::rc::Rc;
 
+
+
+#[derive(Clone)]
 pub struct XyRect {
     material_index: usize,
     x0: f32,

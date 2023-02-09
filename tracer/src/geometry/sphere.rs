@@ -4,33 +4,16 @@ use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use crate::material::Material;
 use glam::Vec3A;
-use std::rc::Rc;
 
+
+
+#[derive(Clone)]
 pub struct Sphere {
     pub center: Vec3A,
     pub radius: f32,
     pub material_index: usize,
 }
 
-pub struct Square {
-    pub center: Vec3A,
-    pub radius: f32,
-}
-
-impl Square {
-    pub fn new(center: Vec3A, radius: f32) -> Square {
-        Square { center, radius }
-    }
-}
-
-impl Hittable for Square {
-    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
-        None
-    }
-    fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
-        None
-    }
-}
 
 pub fn get_sphere_uv(p: Vec3A) -> (f32, f32) {
     let theta = -p.y.acos();

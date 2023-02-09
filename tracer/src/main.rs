@@ -36,7 +36,6 @@ use image::RgbImage;
 use std::fs::File;
 use std::io::Write;
 use std::rc::Rc;
-
 //
 // fn simple_light() -> HittableList {
 //     let noise = Rc::new(Noise::new(4.0));
@@ -201,7 +200,7 @@ use std::rc::Rc;
 // }
 
 fn earth() -> (Vec<Materials>, HittableList) {
-    let materials = vec![Materials::Lambertian(Lambertian::new(Rc::new(
+    let materials = vec![Materials::Lambertian(Lambertian::new(Box::new(
         Image::new("./assets/earthmap.jpg").unwrap(),
     )))];
     let geo = HittableList::new(vec![Geometry::Sphere(Sphere::new(

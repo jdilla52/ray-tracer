@@ -4,19 +4,19 @@ use crate::material::{Material, ScatterRecord};
 use crate::texture::solid::Solid;
 use crate::texture::Texture;
 use glam::Vec3A;
-use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct DiffuseLight {
-    emit: Rc<dyn Texture>,
+    emit: Box<dyn Texture>,
 }
 
 impl DiffuseLight {
-    pub fn new(emit: Rc<dyn Texture>) -> Self {
+    pub fn new(emit: Box<dyn Texture>) -> Self {
         Self { emit }
     }
 
     pub fn new_from_color(&self, r: f32, g: f32, b: f32) -> Self {
-        Self::new(Rc::new(Solid::new_from_rgb(r, g, b)))
+        Self::new(Box::new(Solid::new_from_rgb(r, g, b)))
     }
 }
 

@@ -3,10 +3,11 @@ use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
-use std::rc::Rc;
 
+
+#[derive(Clone)]
 pub struct RotateY {
-    pub object: Rc<dyn Hittable>,
+    pub object: Box<dyn Hittable>,
     pub sin_theta: f32,
     pub cos_theta: f32,
     pub has_box: bool,
@@ -14,7 +15,7 @@ pub struct RotateY {
 }
 
 impl RotateY {
-    pub(crate) fn new(object: Rc<dyn Hittable>, angle: f32) -> Self {
+    pub(crate) fn new(object: Box<dyn Hittable>, angle: f32) -> Self {
         let radians = angle.to_radians();
         let sin_theta = radians.sin();
         let cos_theta = radians.cos();
@@ -93,7 +94,7 @@ impl Hittable for RotateY {
 
     fn bounding_box(&self, t0: f32, t1: f32) -> Option<Aabb> {
         if self.has_box {
-            Some(self.bbox)
+            Some(self.bbox.clone())
         } else {
             None
         }

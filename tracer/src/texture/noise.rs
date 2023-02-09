@@ -2,6 +2,7 @@ use crate::texture::perlin::Perlin;
 use crate::texture::Texture;
 use glam::Vec3A;
 
+#[derive(Clone, Debug)]
 pub struct Noise {
     pub scale: f32,
     pub noise: Perlin,

@@ -4,15 +4,15 @@ use crate::material::{Material, ScatterRecord};
 use crate::texture::Texture;
 use crate::vec3;
 use glam::Vec3A;
-use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct Dieletric {
     pub ref_idx: f32,
-    pub texture: Rc<dyn Texture>,
+    pub texture: Box<dyn Texture>,
 }
 
 impl Dieletric {
-    pub fn new(ref_idx: f32, texture: Rc<dyn Texture>) -> Self {
+    pub fn new(ref_idx: f32, texture: Box<dyn Texture>) -> Self {
         Dieletric { ref_idx, texture }
     }
     fn reflectance(cosine: f32, ref_idx: f32) -> f32 {

@@ -3,15 +3,17 @@ use crate::geometry::Hittable;
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
-use std::rc::Rc;
 
+
+
+#[derive(Clone)]
 pub struct Translate {
-    pub object: Rc<dyn Hittable>,
+    pub object: Box<dyn Hittable>,
     pub offset: Vec3A,
 }
 
 impl Translate {
-    pub fn new(object: Rc<dyn Hittable>, offset: Vec3A) -> Self {
+    pub fn new(object: Box<dyn Hittable>, offset: Vec3A) -> Self {
         Self { object, offset }
     }
 }

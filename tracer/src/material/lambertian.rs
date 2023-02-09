@@ -4,15 +4,15 @@ use crate::material::{Material, ScatterRecord};
 use crate::texture::Texture;
 use crate::vec3;
 use glam::Vec3A;
-use std::rc::Rc;
+
 
 #[derive(Clone)]
 pub struct Lambertian {
-    pub albedo: Rc<dyn Texture>,
+    pub albedo: Box<dyn Texture>,
 }
 
 impl Lambertian {
-    pub fn new(albedo: Rc<dyn Texture>) -> Self {
+    pub fn new(albedo: Box<dyn Texture>) -> Self {
         Lambertian { albedo }
     }
 }

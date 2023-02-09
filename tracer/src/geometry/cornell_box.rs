@@ -7,8 +7,9 @@ use crate::geometry::{Geometry, Hittable};
 use crate::intersection::hit_record::HitRecord;
 use crate::intersection::ray::Ray;
 use glam::Vec3A;
-use std::rc::Rc;
 
+
+#[derive(Clone)]
 pub struct CornellBox {
     pub min: Vec3A,
     pub max: Vec3A,
